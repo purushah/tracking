@@ -39,7 +39,7 @@ public class DrawGraphProgress extends Graph {
 	protected Map<String, List<Pair<String, String>>> getDataAsProgress() throws IOException, ParseException {
 
 		Map<String, ReportObject> report = getReport();
-		List<String> list = getProgressList();
+		List<String> list = getFilterList();
 
 		Map<String, List<Pair<String, String>>> progressObjectMap = new HashMap<String, List<Pair<String, String>>>();
 

@@ -258,7 +258,7 @@ public class LoadReport implements ActionListener {
 			if (progress.contains(((JLabel) pro[0]).getText())) {
 				ProgressObject objcet = progress.get(((JLabel) pro[0]).getText());
 				if (pro[1] instanceof JSpinner) {
-					((JSpinner) pro[1]).setValue(Integer.parseInt(objcet.getProgress()));
+					((JSpinner) pro[1]).setValue(Double.parseDouble(objcet.getProgress()));
 					} else {
 					((JComboBox) pro[1]).setSelectedItem(getOption(objcet.getProgress()));
 				}

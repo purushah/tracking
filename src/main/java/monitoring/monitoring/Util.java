@@ -73,6 +73,52 @@ public class Util {
 
 	}
 
+	public static Map<String, String> getColorMap() throws IOException {
+		List<String> results = Files.readAllLines(
+				new File(getPath() + "/" + ProgressReport.FOOD_COLOR_LIST + ".txt").toPath(), Charset.defaultCharset());
+		Map<String, String> newResults = new HashMap<String, String>();
+		String color = null;
+
+		for (String result : results) {
+			if (StringUtils.isEmpty(result)) {
+				continue;
+			}
+			if (result.startsWith(ProgressConstant.section_start)) {
+				color = StringUtils.substring(result, ProgressConstant.section_start.length());
+			} else {
+				newResults.put(result, color);
+			}
+		}
+		return newResults;
+
+	}
+
+	public static Map<String, List<String>> getCalanderMap() throws IOException {
+		List<String> results = Files.readAllLines(
+				new File(getPath() + "/" + ProgressConstant.CALENDAR + ".txt").toPath(), Charset.defaultCharset());
+		Map<String, List<String>> newResults = new HashMap<String, List<String>>();
+
+		List<String> events = new ArrayList<String>();
+
+		String date = null;
+
+		for (String result : results) {
+			if (StringUtils.isEmpty(result)) {
+				continue;
+			}
+			if (result.startsWith(ProgressConstant.section_start)) {
+				if(date!=null){
+					newResults.put(date, events);
+				}
+				date = StringUtils.substring(result, ProgressConstant.section_start.length());
+			} else {
+				events.add(result);
+			}
+		}
+		return newResults;
+
+	}
+
 	public static void writeFileList(String name, List<String> contents) throws IOException {
 		PrintWriter writer = new PrintWriter(new FileWriter(Util.getPath() + "/" + name + ".txt"));
 		for (String content : contents) {
@@ -107,6 +153,11 @@ public class Util {
 	public static Date getDate(String date) throws ParseException {
 		return new SimpleDateFormat("MM-dd-yyyy").parse(date);
 	}
+	
+	public static String getDate(Date date) throws ParseException {
+		return new SimpleDateFormat("MM-dd-yyyy").format(date);
+	}
+
 
 	public static String getLatestReportDateAVailabe() throws IOException {
 		File f = new File(getPath());
@@ -258,7 +309,7 @@ public class Util {
 				}
 			}
 		});
-		
+
 		Arrays.sort(files, new Comparator<File>() {
 			public int compare(File o1, File o2) {
 				try {

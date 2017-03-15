@@ -23,6 +23,7 @@ public class FilterConfirmBox {
 		this.name = name;
 		this.list = list;
 	}
+	
 
 	public List<String> getFilter() {
 		int i = 0;

@@ -6,6 +6,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
+
 import monitoring.monitoring.ProgressConstant;
 import monitoring.monitoring.ProgressReport;
 
@@ -25,8 +27,12 @@ public class Progress extends BasicObject {
 
 	@Override
 	public void readObject(String progress) {
-		add(new ProgressObject(progress.split(ProgressConstant.seperator)[0],
-				progress.split(ProgressConstant.seperator)[1]));
+		if (progress.split(ProgressConstant.seperator).length > 1) {
+			add(new ProgressObject(progress.split(ProgressConstant.seperator)[0],
+					progress.split(ProgressConstant.seperator)[1]));
+		} else {
+			add(new ProgressObject(progress.split(ProgressConstant.seperator)[0], "1"));
+		}
 
 	}
 
@@ -69,5 +75,11 @@ public class Progress extends BasicObject {
 		return current;
 	}
 
-	
+	public void validate() throws Exception {
+		for (ProgressObject dose : progress) {
+			if (StringUtils.isEmpty(dose.getProgress()))
+				throw new Exception(getName() + " :  Invalid date " + dose.getName());
+		}
+	}
+
 }

@@ -157,6 +157,7 @@ public abstract class Graph {
 			public void actionPerformed(ActionEvent e) {
 				try {
 					FilterConfirmBox graphFilter = new FilterConfirmBox(name, getFilterList());
+					graphList = new ArrayList<String>();
 					graphList.addAll(graphFilter.getFilter());
 					reDrawGraph();
 				} catch (IOException e1) {

@@ -26,6 +26,7 @@ import javax.swing.UIManager;
 import net.miginfocom.swing.MigLayout;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
@@ -34,6 +35,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.BoxLayout;
@@ -58,6 +60,10 @@ public class ProgressReport extends JPanel {
 	public static String NOTE = "Note";
 	public static String BEHAVIOUR = "Behaviour";
 	public static String OPTION_LIST = "option";
+	public static String FOOD_COLOR_LIST = "food_color";
+
+	
+	public static boolean shutdown = false;
 
 	JTabbedPane tabbedPane = new JTabbedPane();
 
@@ -95,7 +101,7 @@ public class ProgressReport extends JPanel {
 
 	}
 
-	protected JComponent makeTextPanel(String name) {
+	protected JPanel makeTextPanel(String name) {
 		JPanel panel = new JPanel(false);
 		panel.setName(name);
 		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
@@ -127,17 +133,23 @@ public class ProgressReport extends JPanel {
 		frame.setJMenuBar(getMenuBar(report));
 		setupToolBar(frame, report);
 
+		if(shutdown){
+			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		}
 		// Display the window.
 		frame.pack();
 
 		frame.setVisible(true);
 		frame.setSize(new Dimension(1200, 800));
+		
+		
 
 	}
 
 	public static void main(String[] args) {
 		// Schedule a job for the event dispatch thread:
 		// creating and showing this application's GUI.
+		shutdown = true;
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -155,7 +167,7 @@ public class ProgressReport extends JPanel {
 		JComponent vegetablesPanel = makeTextPanel(VEGI);
 		vegetablesPanel.setLayout(new GridLayout(19, 5));
 		tabbedPane.addTab(VEGI, vegetablesPanel);
-		addToTab(vegetablesPanel, VEGI);
+		addToTabwithColor(vegetablesPanel, VEGI, Util.getColorMap());
 
 	}
 
@@ -172,7 +184,7 @@ public class ProgressReport extends JPanel {
 	}
 
 	private void addTherapy() throws IOException {
-		JComponent progressPanel = makeTextPanel(THERAPY);
+		JPanel progressPanel = makeTextPanel(THERAPY);
 		tabbedPane.addTab(THERAPY, progressPanel);
 		progressPanel.setLayout(new GridLayout(18, 1));
 
@@ -182,7 +194,7 @@ public class ProgressReport extends JPanel {
 			p.setLayout(new MigLayout());
 			JCheckBox boxes = new JCheckBox(vegi);
 			p.add(boxes, "w 190!");
-			JSpinner spinner = new JSpinner(new SpinnerNumberModel(0.0, -1000.0, 1000.0, 0.1));
+			JSpinner spinner = getSpinner(progressPanel);
 			p.add(spinner, "w 70!");
 			progressPanel.add(p);
 			p.add(new JLabel("Hours/Times"));
@@ -192,7 +204,7 @@ public class ProgressReport extends JPanel {
 	}
 
 	private void addBehaviour() throws IOException {
-		JComponent progressPanel = makeTextPanel(BEHAVIOUR);
+		JPanel progressPanel = makeTextPanel(BEHAVIOUR);
 		tabbedPane.addTab(BEHAVIOUR, progressPanel);
 		progressPanel.setLayout(new GridLayout(18, 1));
 
@@ -202,7 +214,7 @@ public class ProgressReport extends JPanel {
 			p.setLayout(new MigLayout());
 			JCheckBox boxes = new JCheckBox(vegi);
 			p.add(boxes, "w 190!");
-			JSpinner spinner = new JSpinner(new SpinnerNumberModel(0.0, -1000.0, 1000.0, 0.1));
+			JSpinner spinner = getSpinner(progressPanel);
 			p.add(spinner, "w 70!");
 			progressPanel.add(p);
 			p.add(new JLabel("Times"));
@@ -249,6 +261,21 @@ public class ProgressReport extends JPanel {
 			panel1.add(boxes);
 		}
 	}
+	
+	private void addToTabwithColor(JComponent panel1, String name, Map<String,String> colorMap) throws IOException {
+		List<String> list = Util.getFileList(name);
+		for (String item : list) {
+			JCheckBox boxes = new JCheckBox(item);
+			System.out.println(item );
+
+			System.out.println(item + " " + ObjectFactory.getColor(colorMap.get(item)));
+			if(ObjectFactory.getColor(colorMap.get(item))!=null){
+			boxes.setForeground(ObjectFactory.getColor(colorMap.get(item)));
+			}
+			panel1.add(boxes);
+		}
+	}
+
 
 	private void addSupplements() throws IOException {
 		JComponent supplementPanel = makeTextPanel(SUPPLEMENTS);
@@ -272,7 +299,7 @@ public class ProgressReport extends JPanel {
 
 	private void addProgress() throws IOException {
 
-		JComponent progressPanel = makeTextPanel(PROGRESS);
+		JPanel progressPanel = makeTextPanel(PROGRESS);
 		tabbedPane.addTab(PROGRESS, progressPanel);
 		progressPanel.setLayout(new GridLayout(18, 1));
 
@@ -286,14 +313,20 @@ public class ProgressReport extends JPanel {
 		for (String vegi : vegitables) {
 			String name = vegi;
 			boolean isOption = false;
+			boolean JspinnerListerner = false;
 			String toolTip = null;
 			if (vegi.contains(ProgressConstant.seperator)) {
 				name = vegi.split(ProgressConstant.seperator)[0];
-				toolTip = vegi.split(ProgressConstant.seperator)[1];
-				if (vegi.split(ProgressConstant.seperator).length > 2) {
-					if (vegi.split(ProgressConstant.seperator)[2].equals("option")) {
+				if (vegi.split(ProgressConstant.seperator).length > 1) {
+					if (vegi.split(ProgressConstant.seperator)[1].trim().equals("option")) {
 						isOption = true;
 					}
+				}
+				if (vegi.split(ProgressConstant.seperator).length > 2) {
+					toolTip = vegi.split(ProgressConstant.seperator)[1];
+				}
+				if (name.equals("Sleep - Wakeup") || name.equals("Sleep - At")) {
+					JspinnerListerner = true;
 				}
 			}
 			JPanel p = new JPanel();
@@ -314,7 +347,7 @@ public class ProgressReport extends JPanel {
 			if (isOption) {
 				p.add(getOptionList(), "w 125!");
 			} else {
-				JSpinner spinner = new JSpinner(new SpinnerNumberModel(0.0, -1000.0, 1000.0, 0.1));
+				JSpinner spinner = getSpinner(progressPanel, JspinnerListerner);
 				p.add(spinner, "w 120!");
 			}
 			progressPanel.add(p);
@@ -382,6 +415,18 @@ public class ProgressReport extends JPanel {
 		JComboBox<String> jlst = new JComboBox(Util.getOptionList().toArray(new String[0]));
 		return jlst;
 
+	}
+
+	private JSpinner getSpinner(JPanel panel) {
+		return getSpinner(panel, false);
+	}
+
+	private JSpinner getSpinner(JPanel panel, boolean listner) {
+		JSpinner spinner = new JSpinner(new SpinnerNumberModel(0.0, -1000.0, 1000.0, 1.0));
+//		if (listner) {
+//			spinner.addChangeListener(new JSpinnerChangeListener(panel));
+//		}
+		return spinner;
 	}
 
 }

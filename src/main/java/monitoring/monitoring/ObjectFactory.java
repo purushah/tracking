@@ -1,5 +1,6 @@
 package monitoring.monitoring;
 
+import java.awt.Color;
 import java.io.IOException;
 import java.util.List;
 
@@ -107,8 +108,6 @@ public class ObjectFactory {
 			return new GraphHomeopathy(name);
 		}
 
-
-
 		return null;
 	}
 
@@ -134,7 +133,29 @@ public class ObjectFactory {
 		if (name.equals(ProgressReport.HOMOEPATHY)) {
 			return new GraphHomeopathy(name, graphList, date, offset);
 		}
+		return null;
+	}
 
+	public static Color getColor(String name) {
+		if(name==null){
+			return null;
+		}
+		if (name.equalsIgnoreCase("Red")) {
+			return Color.RED;
+		}
+
+		if (name.equals("Orange")) {
+			return Color.ORANGE;
+		}
+		if (name.equals("Green")) {
+			return Color.GREEN;
+		}
+		if (name.equals("Blue")) {
+			return Color.blue;
+		}
+		if (name.equals("White")) {
+			return Color.WHITE;
+		}
 
 		return null;
 	}
