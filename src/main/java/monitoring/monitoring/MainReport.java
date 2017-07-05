@@ -1,3 +1,4 @@
+package monitoring.monitoring;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -117,6 +118,31 @@ public class MainReport {
 			}
 		});
 		menu.add(reportMenu);
+		
+		JMenuItem noteMenu = new JMenuItem("Note");
+		noteMenu.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					DisplayNotes.createAndShowGUI();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+			}
+		});
+		menu.add(noteMenu);
+		
+		JMenuItem specialEvent = new JMenuItem("Special Event");
+		specialEvent.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					DisplaySpecialEvent.createAndShowGUI();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+			}
+		});
+		menu.add(specialEvent);
+
 		menuBar.add(menu);
 		return menuBar;
 	}

@@ -4,6 +4,7 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -30,18 +31,18 @@ import monitoring.pojo.ProgressObject;
 import monitoring.pojo.Supplements;
 import monitoring.pojo.Therapy;
 
-public class LoadReport implements ActionListener {
+public class AddNewItem implements ActionListener {
 	JPanel report;
 	Map<String, BasicObject> objectMap = new HashMap<String, BasicObject>();
 
 	String date;
 
-	public LoadReport(JPanel report, String date) {
+	public AddNewItem(JPanel report, String date) {
 		this.report = report;
 		this.date = date;
 	}
 
-	public LoadReport(JPanel report) {
+	public AddNewItem(JPanel report) {
 		this.report = report;
 	}
 
@@ -50,66 +51,63 @@ public class LoadReport implements ActionListener {
 		objectMap = Util.getReport(date);
 
 		JTabbedPane tabbedPane = (JTabbedPane) (report.getComponent(0));
+		int selIndex = tabbedPane.getSelectedIndex();
 		int totalTabs = tabbedPane.getTabCount();
 		for (int i = 0; i < totalTabs; i++) {
-			update(tabbedPane.getComponent(i));
+			Component c = tabbedPane.getComponent(i);
+			if (c.getName().equals(ProgressReport.VEGI)) {
+				loadVegitables((JPanel) c);
+			}
+			if (c.getName().equals(ProgressReport.SUPPLEMENTS)) {
+				loadSupplements((JPanel) c);
+			}
+			if (c.getName().equals(ProgressReport.PROGRESS)) {
+				try {
+					loadProgress((JPanel) c);
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+
+			if (c.getName().equals(ProgressReport.DETOX_BATH)) {
+				loadDetoxBath((JPanel) c);
+			}
+			if (c.getName().equals(ProgressReport.ESSENTIAL_OIL)) {
+				loadEssentialOil((JPanel) c);
+			}
+
+			// if (c.getName().equals(ProgressReport.FERMENTATION)) {
+			// loadFermentation((JPanel) c);
+			// }
+
+			if (c.getName().equals(ProgressReport.FRUITS)) {
+				loadFruits((JPanel) c);
+			}
+
+			if (c.getName().equals(ProgressReport.HOMOEPATHY)) {
+				loadHomeopathy((JPanel) c);
+			}
+
+			if (c.getName().equals(ProgressReport.JUICING)) {
+				loadJucing((JPanel) c);
+			}
+
+			if (c.getName().equals(ProgressReport.SPECAIL_EVENT)) {
+				loadSpecialEvent((JPanel) c);
+			}
+
+			if (c.getName().equals(ProgressReport.THERAPY)) {
+				loadTherapy((JPanel) c);
+			}
+			if (c.getName().equals(ProgressReport.BEHAVIOUR)) {
+				loadBehaviour((JPanel) c);
+			}
 
 		}
 
 		JOptionPane.showMessageDialog(report, "Data loaded from " + date);
 
-	}
-
-	public void update(Component c) {
-
-		if (c.getName().equals(ProgressReport.VEGI)) {
-			loadVegitables((JPanel) c);
-		}
-		if (c.getName().equals(ProgressReport.SUPPLEMENTS)) {
-			loadSupplements((JPanel) c);
-		}
-		if (c.getName().equals(ProgressReport.PROGRESS)) {
-			try {
-				loadProgress((JPanel) c);
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-		}
-
-		if (c.getName().equals(ProgressReport.DETOX_BATH)) {
-			loadDetoxBath((JPanel) c);
-		}
-		if (c.getName().equals(ProgressReport.ESSENTIAL_OIL)) {
-			loadEssentialOil((JPanel) c);
-		}
-
-		// if (c.getName().equals(ProgressReport.FERMENTATION)) {
-		// loadFermentation((JPanel) c);
-		// }
-
-		if (c.getName().equals(ProgressReport.FRUITS)) {
-			loadFruits((JPanel) c);
-		}
-
-		if (c.getName().equals(ProgressReport.HOMOEPATHY)) {
-			loadHomeopathy((JPanel) c);
-		}
-
-		if (c.getName().equals(ProgressReport.JUICING)) {
-			loadJucing((JPanel) c);
-		}
-
-		if (c.getName().equals(ProgressReport.SPECAIL_EVENT)) {
-			loadSpecialEvent((JPanel) c);
-		}
-
-		if (c.getName().equals(ProgressReport.THERAPY)) {
-			loadTherapy((JPanel) c);
-		}
-		if (c.getName().equals(ProgressReport.BEHAVIOUR)) {
-			loadBehaviour((JPanel) c);
-		}
 	}
 
 	private void loadNote(JPanel panel) {
@@ -258,27 +256,28 @@ public class LoadReport implements ActionListener {
 		Progress progress = (Progress) objectMap.get(ProgressReport.PROGRESS);
 		for (Component c : panel.getComponents()) {
 			Component[] pro = ((JPanel) c).getComponents();
-			String name = ((JLabel) pro[0]).getText();
+			String name=((JLabel) pro[0]).getText();
+
 			if (progress.contains(name)) {
-				ProgressObject object = progress.get(name);
+				ProgressObject objcet = progress.get(name);
 				if (pro[1] instanceof JSpinner) {
-					((JSpinner) pro[1]).setValue(Double.parseDouble(object.getProgress()));
-				} else {
-					((JComboBox) pro[1]).setSelectedItem(getOption(name, object.getProgress()));
+					((JSpinner) pro[1]).setValue(Double.parseDouble(objcet.getProgress()));
+					} else {
+					((JComboBox) pro[1]).setSelectedItem(getOption(name, objcet.getProgress()));
 				}
 			}
 		}
 
 	}
-
+	
 	public String getOption(String name, String value) throws IOException {
-		Map<String, String> result = Util.getOptionMapForValue(name);
-		for (String k : result.keySet()) {
-			if (result.get(k).equals(value)) {
-				return k;
-			}
-		}
-
-		return null;
+	    Map<String, String> result = Util.getOptionMap(Util.getOptionType(name));
+	    for(String k: result.keySet()){
+	        if(result.get(k).equals(value)){
+	        	return k;
+	        }
+	    }
+	    
+	    return null;
 	}
 }

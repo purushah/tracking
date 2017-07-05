@@ -3,8 +3,8 @@ package monitoring.monitoring;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -51,12 +51,23 @@ public class SaveReport implements ActionListener {
 		this.report = report;
 	}
 
+	public SaveReport(JPanel panel, String dayDate) {
+		this.report = panel;
+		this.date = dayDate;
+	}
+
 	public void actionPerformed(ActionEvent e) {
 		if (date == null) {
 			date = getDate();
 		}
 		try {
-			writer = new PrintWriter(new FileWriter(Util.getPath() + "/" + getDate() + ".txt"));
+
+			if (new File(Util.getPath() + "/" + date + ".txt").exists()) {
+				JOptionPane.showMessageDialog(null, "" + date + " is already there", "Error",
+						JOptionPane.ERROR_MESSAGE);
+			}
+
+			writer = new PrintWriter(new FileWriter(Util.getPath() + "/" + date + ".txt"));
 
 			JTabbedPane tabbedPane = (JTabbedPane) (report.getComponent(0));
 			int totalTabs = tabbedPane.getTabCount();
@@ -112,6 +123,7 @@ public class SaveReport implements ActionListener {
 				// other stuff
 			}
 		} catch (Exception e1) {
+			e1.printStackTrace();
 			JOptionPane.showMessageDialog(null, e1.getMessage(), "Invalid Data", JOptionPane.ERROR_MESSAGE);
 
 		}
@@ -277,11 +289,12 @@ public class SaveReport implements ActionListener {
 		for (Component c : panel.getComponents()) {
 			JPanel progress = (JPanel) c;
 			Component[] pro = progress.getComponents();
+			String name = ((JLabel) pro[0]).getText();
 			if (pro[1] instanceof JSpinner) {
-				progressObject.add(new ProgressObject(((JLabel) pro[0]).getText(), ((JSpinner) pro[1]).getValue()));
+				progressObject.add(new ProgressObject(name, ((JSpinner) pro[1]).getValue()));
 			} else {
-				progressObject.add(new ProgressObject(((JLabel) pro[0]).getText(),
-						Util.getOptionMap().get(((JComboBox) pro[1]).getSelectedItem())));
+				progressObject.add(
+						new ProgressObject(name, Util.getOptionMapForValue(name).get(((JComboBox) pro[1]).getSelectedItem())));
 			}
 		}
 

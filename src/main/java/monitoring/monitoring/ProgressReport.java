@@ -27,6 +27,7 @@ import net.miginfocom.swing.MigLayout;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
@@ -58,11 +59,11 @@ public class ProgressReport extends JPanel {
 	public static String PROGRESS = "Progress";
 	public static String SPECAIL_EVENT = "Special event";
 	public static String NOTE = "Note";
+	public static String ATEC = "ATEC";
 	public static String BEHAVIOUR = "Behaviour";
 	public static String OPTION_LIST = "option";
 	public static String FOOD_COLOR_LIST = "food_color";
 
-	
 	public static boolean shutdown = false;
 
 	JTabbedPane tabbedPane = new JTabbedPane();
@@ -83,13 +84,14 @@ public class ProgressReport extends JPanel {
 		addNote();
 		addReport();
 		addProgress();
+		addATEC();
 		add(tabbedPane);
 		tabbedPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
 	}
 
 	private void addNote() throws IOException {
 		JComponent progressPanel = makeTextPanel(NOTE);
-		new NoteUI((JPanel) progressPanel);
+		new NoteUIProgress((JPanel) progressPanel);
 		tabbedPane.add(NOTE, progressPanel);
 
 	}
@@ -133,7 +135,7 @@ public class ProgressReport extends JPanel {
 		frame.setJMenuBar(getMenuBar(report));
 		setupToolBar(frame, report);
 
-		if(shutdown){
+		if (shutdown) {
 			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		}
 		// Display the window.
@@ -141,8 +143,6 @@ public class ProgressReport extends JPanel {
 
 		frame.setVisible(true);
 		frame.setSize(new Dimension(1200, 800));
-		
-		
 
 	}
 
@@ -223,6 +223,25 @@ public class ProgressReport extends JPanel {
 
 	}
 
+	private void updateBehaviour(JComponent panel1) throws IOException {
+		panel1.removeAll();
+		panel1.setLayout(new GridLayout(18, 1));
+
+		List<String> vegitables = Util.getFileList(BEHAVIOUR);
+		for (String vegi : vegitables) {
+			JPanel p = new JPanel();
+			p.setLayout(new MigLayout());
+			JCheckBox boxes = new JCheckBox(vegi);
+			p.add(boxes, "w 190!");
+			JSpinner spinner = getSpinner((JPanel) panel1);
+			p.add(spinner, "w 70!");
+			panel1.add(p);
+			p.add(new JLabel("Times"));
+
+		}
+
+	}
+
 	private void addDetoxBath() throws IOException {
 		JComponent detoxBathPanel = makeTextPanel(DETOX_BATH);
 		tabbedPane.addTab(DETOX_BATH, detoxBathPanel);
@@ -238,11 +257,13 @@ public class ProgressReport extends JPanel {
 	private void addHomeopathy() throws IOException {
 		JComponent homeopathyPanel = makeTextPanel(HOMOEPATHY);
 		tabbedPane.addTab(HOMOEPATHY, homeopathyPanel);
+		homeopathyPanel.setLayout(new GridLayout(18, 4));
+
 		List<String> homepathy = Util.getFileList(HOMOEPATHY);
 		for (String object : homepathy) {
 			JPanel p = new JPanel();
-			p.setLayout(new FlowLayout(FlowLayout.LEFT));
-			p.add(new JCheckBox(object));
+			p.setLayout(new MigLayout());
+			p.add(new JCheckBox(object), "w 190!");
 			JTextField ml = new JTextField(10);
 			p.add(ml);
 			p.add(new JLabel("Times"));
@@ -261,24 +282,53 @@ public class ProgressReport extends JPanel {
 			panel1.add(boxes);
 		}
 	}
-	
-	private void addToTabwithColor(JComponent panel1, String name, Map<String,String> colorMap) throws IOException {
+
+	private void refeshTab(JComponent panel1, String name) throws IOException {
+		panel1.removeAll();
 		List<String> list = Util.getFileList(name);
 		for (String item : list) {
 			JCheckBox boxes = new JCheckBox(item);
-			System.out.println(item );
+			panel1.add(boxes);
+		}
+	}
+
+	private void addToTabwithColor(JComponent panel1, String name, Map<String, String> colorMap) throws IOException {
+		List<String> list = Util.getFileList(name);
+		for (String item : list) {
+			JCheckBox boxes = new JCheckBox(item);
+			System.out.println(item);
 
 			System.out.println(item + " " + ObjectFactory.getColor(colorMap.get(item)));
-			if(ObjectFactory.getColor(colorMap.get(item))!=null){
-			boxes.setForeground(ObjectFactory.getColor(colorMap.get(item)));
+			if (ObjectFactory.getColor(colorMap.get(item)) != null) {
+				boxes.setForeground(ObjectFactory.getColor(colorMap.get(item)));
 			}
 			panel1.add(boxes);
 		}
 	}
 
-
 	private void addSupplements() throws IOException {
 		JComponent supplementPanel = makeTextPanel(SUPPLEMENTS);
+		supplementPanel.setLayout(new GridLayout(18, 4));
+		tabbedPane.addTab(SUPPLEMENTS, supplementPanel);
+		List<String> vegitables = Util.getFileList(SUPPLEMENTS);
+		int i = 0;
+		for (String vegi : vegitables) {
+			JPanel p = new JPanel();
+			p.setLayout(new MigLayout());
+			p.add(new JCheckBox(vegi), "w 190!");
+			JTextField ml = new JTextField(3);
+			p.add(ml);
+			p.add(new JLabel("Times"));
+			JTextField times = new JTextField(3);
+			p.add(times);
+			p.add(new JLabel("Ml/Mg"));
+			supplementPanel.add(p);
+		}
+	}
+	
+	
+	private void updateSupplements(JComponent supplementPanel) throws IOException {
+		supplementPanel.removeAll();
 		supplementPanel.setLayout(new GridLayout(18, 4));
 		tabbedPane.addTab(SUPPLEMENTS, supplementPanel);
 		List<String> vegitables = Util.getFileList(SUPPLEMENTS);
@@ -313,13 +363,15 @@ public class ProgressReport extends JPanel {
 		for (String vegi : vegitables) {
 			String name = vegi;
 			boolean isOption = false;
+			String option = null;
 			boolean JspinnerListerner = false;
 			String toolTip = null;
 			if (vegi.contains(ProgressConstant.seperator)) {
 				name = vegi.split(ProgressConstant.seperator)[0];
 				if (vegi.split(ProgressConstant.seperator).length > 1) {
-					if (vegi.split(ProgressConstant.seperator)[1].trim().equals("option")) {
+					if (vegi.split(ProgressConstant.seperator)[1].trim().endsWith("option")) {
 						isOption = true;
+						option= vegi.split(ProgressConstant.seperator)[1].trim();
 					}
 				}
 				if (vegi.split(ProgressConstant.seperator).length > 2) {
@@ -345,7 +397,7 @@ public class ProgressReport extends JPanel {
 
 			p.add(label, "w 190!");
 			if (isOption) {
-				p.add(getOptionList(), "w 125!");
+				p.add(getOptionList(option), "w 125!");
 			} else {
 				JSpinner spinner = getSpinner(progressPanel, JspinnerListerner);
 				p.add(spinner, "w 120!");
@@ -354,6 +406,27 @@ public class ProgressReport extends JPanel {
 
 		}
 	}
+	
+	private void addATEC() throws IOException {
+		JPanel progressPanel = makeTextPanel(ATEC);
+		tabbedPane.addTab(ATEC, progressPanel);
+		progressPanel.setLayout(new GridLayout(18, 1));
+
+		List<String> vegitables = Util.getFileList(ATEC);
+		for (String vegi : vegitables) {
+			String name = vegi;
+			boolean JspinnerListerner = false;
+			JPanel p = new JPanel();
+			p.setLayout(new MigLayout());
+			JLabel label = new JLabel(name);
+			p.add(label, "w 190!");
+			JSpinner spinner = getSpinner(progressPanel, JspinnerListerner);
+			p.add(spinner, "w 120!");
+			progressPanel.add(p);
+		}
+
+	}
+
 
 	private void addSpecailEvent() throws IOException {
 
@@ -376,12 +449,15 @@ public class ProgressReport extends JPanel {
 	public void actionPerformed(ActionEvent e) {
 	}
 
-	public static void setupToolBar(JFrame frame, JPanel panel) {
+	public static void setupToolBar(JFrame frame, ProgressReport panel) {
 		JToolBar toolBar = new javax.swing.JToolBar();
 		JButton save = new javax.swing.JButton("Save");
 		save.addActionListener(new SaveReport(panel));
 		JButton saveAs = new javax.swing.JButton("SaveAs");
 		saveAs.addActionListener(new SaveReportAs(panel));
+
+		JButton previousDay = new javax.swing.JButton("Save PreviousDay");
+		previousDay.addActionListener(new SaveReport(panel, Util.getDayDate(-1)));
 
 		JButton load = new javax.swing.JButton("Load");
 		load.addActionListener(new LoadOlderReport(panel));
@@ -392,18 +468,68 @@ public class ProgressReport extends JPanel {
 		JButton loadToday = new javax.swing.JButton("Load Today");
 		loadToday.addActionListener(new LoadReport(panel, Util.getDayDate(0)));
 
+		JButton addNewItem = new javax.swing.JButton("Add");
+		addNewItem.addActionListener(new NewItemUI(panel));
+
 		toolBar.add(save);
 		toolBar.addSeparator();
 		toolBar.add(saveAs);
+		toolBar.addSeparator();
+		toolBar.add(previousDay);
 		toolBar.addSeparator();
 		toolBar.add(load);
 		toolBar.addSeparator();
 		toolBar.add(loadPreviousDay);
 		toolBar.addSeparator();
 		toolBar.add(loadToday);
+		toolBar.addSeparator();
+		toolBar.add(addNewItem);
 
 		frame.add(toolBar, BorderLayout.PAGE_START);
 
+	}
+
+	public void update(JComponent c) throws IOException {
+
+		if (c.getName().equals(ProgressReport.VEGI)) {
+			refeshTab((JComponent) c, ProgressReport.VEGI);
+		}
+		if (c.getName().equals(ProgressReport.SUPPLEMENTS)) {
+			updateSupplements(c);
+		}
+		if (c.getName().equals(ProgressReport.PROGRESS)) {
+			addProgress();
+		}
+
+		if (c.getName().equals(ProgressReport.DETOX_BATH)) {
+			addDetoxBath();
+		}
+		if (c.getName().equals(ProgressReport.ESSENTIAL_OIL)) {
+			refeshTab((JComponent) c, ProgressReport.ESSENTIAL_OIL);
+		}
+
+		// if (c.getName().equals(ProgressReport.FERMENTATION)) {
+		// loadFermentation((JPanel) c);
+		// }
+
+		if (c.getName().equals(ProgressReport.FRUITS)) {
+			refeshTab((JComponent) c, ProgressReport.FRUITS);
+		}
+
+		if (c.getName().equals(ProgressReport.HOMOEPATHY)) {
+			addHomeopathy();
+		}
+
+		if (c.getName().equals(ProgressReport.JUICING)) {
+			refeshTab((JComponent) c, ProgressReport.JUICING);
+		}
+
+		if (c.getName().equals(ProgressReport.THERAPY)) {
+			addTherapy();
+		}
+		if (c.getName().equals(ProgressReport.BEHAVIOUR)) {
+			updateBehaviour(c);
+		}
 	}
 
 	public String getTextwithSpacing(String text, int length) {
@@ -411,8 +537,8 @@ public class ProgressReport extends JPanel {
 
 	}
 
-	private JComboBox<String> getOptionList() throws IOException {
-		JComboBox<String> jlst = new JComboBox(Util.getOptionList().toArray(new String[0]));
+	private JComboBox<String> getOptionList(String option ) throws IOException {
+		JComboBox<String> jlst = new JComboBox(Util.getOptionList(option).toArray(new String[0]));
 		return jlst;
 
 	}
@@ -423,9 +549,9 @@ public class ProgressReport extends JPanel {
 
 	private JSpinner getSpinner(JPanel panel, boolean listner) {
 		JSpinner spinner = new JSpinner(new SpinnerNumberModel(0.0, -1000.0, 1000.0, 1.0));
-//		if (listner) {
-//			spinner.addChangeListener(new JSpinnerChangeListener(panel));
-//		}
+		// if (listner) {
+		// spinner.addChangeListener(new JSpinnerChangeListener(panel));
+		// }
 		return spinner;
 	}
 

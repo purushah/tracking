@@ -1,22 +1,27 @@
 package monitoring.monitoring;
 
+import java.awt.Dimension;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.SortedSet;
-import java.util.TreeSet;
-import javax.swing.AbstractListModel;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.JComponent;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
 import javax.swing.ListModel;
 import javax.swing.SwingUtilities;
 
 @SuppressWarnings("deprecation,rawtypes")
-public class NoteUI {
+public class NewItemUI implements ActionListener {
 	JPanel panel;
 	private javax.swing.JButton addNote;
 	private javax.swing.JLabel jLabel1;
@@ -24,18 +29,19 @@ public class NoteUI {
 	private javax.swing.JScrollPane scrollPane;
 	private javax.swing.JTextField eventText;
 	private SortedListModel sourceListModel;
+	ProgressReport report;
 
 	JPopupMenu popupMenu;
 	JMenuItem removeMenu;
 
-	public NoteUI(JPanel panel) throws IOException {
-		this.panel = panel;
-		initComponents();
+	public NewItemUI(ProgressReport report) {
+		this.panel = new JPanel();
+		this.report = report;
 	}
 
 	@SuppressWarnings("unchecked")
 	// <editor-fold defaultstate="collapsed" desc="Generated Code">
-	private void initComponents() throws IOException {
+	private void initComponents() {
 		sourceListModel = new SortedListModel();
 		eventText = new javax.swing.JTextField();
 		addNote = new javax.swing.JButton();
@@ -59,7 +65,7 @@ public class NoteUI {
 		addNote.setText("Add");
 
 		scrollPane.setViewportView(sourceList);
-		jLabel1.setText("Add Note");
+		jLabel1.setText("Add");
 		scrollPane.setName(ProgressReport.NOTE);
 
 		popupMenu = new JPopupMenu();
@@ -86,8 +92,8 @@ public class NoteUI {
 				.createSequentialGroup().addGap(14, 14, 14)
 				.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
 						.addGroup(layout.createSequentialGroup()
-								.addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 64, Short.MAX_VALUE)
-								.addComponent(eventText, javax.swing.GroupLayout.PREFERRED_SIZE, 995,
+								.addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 10, Short.MAX_VALUE)
+								.addComponent(eventText, javax.swing.GroupLayout.PREFERRED_SIZE, 625,
 										javax.swing.GroupLayout.PREFERRED_SIZE)
 								.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
 								.addComponent(addNote))
@@ -104,7 +110,7 @@ public class NoteUI {
 								.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
 										.addGroup(layout.createSequentialGroup()
 												.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-												.addComponent(scrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 480,
+												.addComponent(scrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 210,
 														javax.swing.GroupLayout.PREFERRED_SIZE)))))
 				.addContainerGap(104, Short.MAX_VALUE)));
 
@@ -118,38 +124,19 @@ public class NoteUI {
 	/**
 	 * @param args
 	 *            the command line arguments
+	 * @throws IOException
 	 */
-	public static void main(String args[]) {
-		/* Set the Nimbus look and feel */
-		// <editor-fold defaultstate="collapsed" desc=" Look and feel setting
-		// code (optional) ">
-		/*
-		 * If Nimbus (introduced in Java SE 6) is not available, stay with the
-		 * default look and feel. For details see
-		 * http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.
-		 * html
-		 */
-		try {
-			for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-				if ("Nimbus".equals(info.getName())) {
-					javax.swing.UIManager.setLookAndFeel(info.getClassName());
-					break;
-				}
-			}
-		} catch (ClassNotFoundException ex) {
-			java.util.logging.Logger.getLogger(SpecialEventUI.class.getName()).log(java.util.logging.Level.SEVERE, null,
-					ex);
-		} catch (InstantiationException ex) {
-			java.util.logging.Logger.getLogger(SpecialEventUI.class.getName()).log(java.util.logging.Level.SEVERE, null,
-					ex);
-		} catch (IllegalAccessException ex) {
-			java.util.logging.Logger.getLogger(SpecialEventUI.class.getName()).log(java.util.logging.Level.SEVERE, null,
-					ex);
-		} catch (javax.swing.UnsupportedLookAndFeelException ex) {
-			java.util.logging.Logger.getLogger(SpecialEventUI.class.getName()).log(java.util.logging.Level.SEVERE, null,
-					ex);
-		}
-		// </editor-fold>
+	public static void main(String args[]) throws IOException {
+		JPanel mainPanel = new JPanel();
+
+		mainPanel.setLayout(new GridLayout(18, 3));
+		mainPanel.setPreferredSize(new Dimension(800, 300));
+		JScrollPane scrollFrame = new JScrollPane(mainPanel);
+		mainPanel.setAutoscrolls(true);
+		scrollFrame.setPreferredSize(new Dimension(800, 250));
+		new NewItemUI(null);
+		int value = JOptionPane.showConfirmDialog(null, mainPanel, null, JOptionPane.OK_CANCEL_OPTION,
+				JOptionPane.PLAIN_MESSAGE);
 
 	}
 
@@ -182,17 +169,58 @@ public class NoteUI {
 
 	private void removeListener(java.awt.event.ActionEvent evt) {
 		Object selected[] = sourceList.getSelectedValues();
-	      clearDestinationSelected();
+		clearDestinationSelected();
 
+	}
 
-}
+	private void clearDestinationSelected() {
+		Object selected[] = sourceList.getSelectedValues();
+		for (int i = selected.length - 1; i >= 0; --i) {
+			sourceListModel.removeElement(selected[i]);
+		}
+		sourceList.getSelectionModel().clearSelection();
+	}
 
-private void clearDestinationSelected() {
-    Object selected[] = sourceList.getSelectedValues();
-    for (int i = selected.length - 1; i >= 0; --i) {
-    	sourceListModel.removeElement(selected[i]);
-    }
-    sourceList.getSelectionModel().clearSelection();
-  }
+	public List<String> getItem() throws IOException {
+
+		panel.removeAll();
+		panel.setLayout(new GridLayout(18, 3));
+		panel.setPreferredSize(new Dimension(800, 300));
+		JScrollPane scrollFrame = new JScrollPane(panel);
+		panel.setAutoscrolls(true);
+		scrollFrame.setPreferredSize(new Dimension(800, 250));
+		initComponents();
+
+		int input = JOptionPane.showConfirmDialog(null, panel, null, JOptionPane.OK_CANCEL_OPTION,
+				JOptionPane.PLAIN_MESSAGE);
+		if (input == JOptionPane.CANCEL_OPTION) {
+			return null;
+		}
+		List<String> item = new ArrayList<String>();
+
+		for (int i = 0; i < sourceListModel.getSize(); i++) {
+			item.add(sourceListModel.getElementAt(i).toString());
+		}
+		return item;
+
+	}
+
+	public void actionPerformed(ActionEvent e) {
+		try {
+			List<String> items = getItem();
+			if (items == null) {
+				return;
+			}
+			JTabbedPane tabbedPane = (JTabbedPane) (report.getComponent(0));
+			int selIndex = tabbedPane.getSelectedIndex();
+			Util.updateFileList(tabbedPane.getComponent(selIndex).getName(), items);
+			report.update((JComponent) tabbedPane.getComponent(selIndex));
+
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+
+	}
 
 }

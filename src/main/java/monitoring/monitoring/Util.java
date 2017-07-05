@@ -50,21 +50,44 @@ public class Util {
 		Collections.sort(result, String.CASE_INSENSITIVE_ORDER);
 		return result;
 	}
+	
+	
+	public static void updateFileList(String name, List<String> lines) throws IOException {
+		List<String> result = Files.readAllLines(new File(getPath() + "/" + name + ".txt").toPath(),
+				Charset.defaultCharset());
+		result.addAll(lines);
+		Files.write(new File(getPath() + "/" + name + ".txt").toPath(), result, Charset.defaultCharset());
+	}
 
-	public static List<String> getOptionList() throws IOException {
+
+	public static List<String> getOptionList(String option) throws IOException {
 		List<String> results = Files.readAllLines(
-				new File(getPath() + "/" + ProgressReport.OPTION_LIST + ".txt").toPath(), Charset.defaultCharset());
+				new File(getPath() + "/" + option + ".txt").toPath(), Charset.defaultCharset());
 		List<String> newResults = new ArrayList<String>();
 		for (String result : results) {
 			newResults.add(result.split(ProgressConstant.seperator)[0]);
 		}
 		return newResults;
+	}
+
+	public static String getOptionType(String option) throws IOException {
+		List<String> results = Files.readAllLines(new File(getPath() + "/" + ProgressReport.PROGRESS + ".txt").toPath(),
+				Charset.defaultCharset());
+		for (String result : results) {
+			if (result.split(ProgressConstant.seperator)[0].equals(option)) {
+				return result.split(ProgressConstant.seperator)[1].trim();
+			}
+
+		}
+
+		return null;
 
 	}
 
-	public static Map<String, String> getOptionMap() throws IOException {
+	
+	public static Map<String, String> getOptionMap(String option) throws IOException {
 		List<String> results = Files.readAllLines(
-				new File(getPath() + "/" + ProgressReport.OPTION_LIST + ".txt").toPath(), Charset.defaultCharset());
+				new File(getPath() + "/" + option + ".txt").toPath(), Charset.defaultCharset());
 		Map<String, String> newResults = new HashMap<String, String>();
 		for (String result : results) {
 			newResults.put(result.split(ProgressConstant.seperator)[0], result.split(ProgressConstant.seperator)[1]);
@@ -72,6 +95,18 @@ public class Util {
 		return newResults;
 
 	}
+	
+	public static Map<String, String> getOptionMapForValue(String name) throws IOException {
+		List<String> results = Files.readAllLines(
+				new File(getPath() + "/" + getOptionType(name.trim()) + ".txt").toPath(), Charset.defaultCharset());
+		Map<String, String> newResults = new HashMap<String, String>();
+		for (String result : results) {
+			newResults.put(result.split(ProgressConstant.seperator)[0], result.split(ProgressConstant.seperator)[1]);
+		}
+		return newResults;
+
+	}
+
 
 	public static Map<String, String> getColorMap() throws IOException {
 		List<String> results = Files.readAllLines(
@@ -93,9 +128,15 @@ public class Util {
 
 	}
 
-	public static Map<String, List<String>> getCalanderMap() throws IOException {
-		List<String> results = Files.readAllLines(
-				new File(getPath() + "/" + ProgressConstant.CALENDAR + ".txt").toPath(), Charset.defaultCharset());
+	public static Map<String, List<String>> getCalanderMap() {
+		List<String> results = null;
+		try {
+			results = Files.readAllLines(
+					new File(getPath() + "/" + ProgressConstant.CALENDAR + ".txt").toPath(), Charset.defaultCharset());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		Map<String, List<String>> newResults = new HashMap<String, List<String>>();
 
 		List<String> events = new ArrayList<String>();

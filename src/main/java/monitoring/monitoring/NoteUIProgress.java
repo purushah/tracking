@@ -16,7 +16,7 @@ import javax.swing.ListModel;
 import javax.swing.SwingUtilities;
 
 @SuppressWarnings("deprecation,rawtypes")
-public class NoteUI {
+public class NoteUIProgress {
 	JPanel panel;
 	private javax.swing.JButton addNote;
 	private javax.swing.JLabel jLabel1;
@@ -28,7 +28,7 @@ public class NoteUI {
 	JPopupMenu popupMenu;
 	JMenuItem removeMenu;
 
-	public NoteUI(JPanel panel) throws IOException {
+	public NoteUIProgress(JPanel panel) throws IOException {
 		this.panel = panel;
 		initComponents();
 	}
@@ -196,3 +196,4 @@ private void clearDestinationSelected() {
   }
 
 }
+
