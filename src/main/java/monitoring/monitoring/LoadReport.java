@@ -33,7 +33,7 @@ import monitoring.pojo.Therapy;
 public class LoadReport implements ActionListener {
 	JPanel report;
 	Map<String, BasicObject> objectMap = new HashMap<String, BasicObject>();
-
+	String tab;
 	String date;
 
 	public LoadReport(JPanel report, String date) {
@@ -41,23 +41,31 @@ public class LoadReport implements ActionListener {
 		this.date = date;
 	}
 
-	public LoadReport(JPanel report) {
-		this.report = report;
+	public LoadReport(JPanel report, String tab, String date) {
+		this(report, date);
+		this.tab = tab;
+
 	}
 
 	public void actionPerformed(ActionEvent e) {
 
+		if (date == null) {
+			date = Util.getDayDate(0);
+		}
 		objectMap = Util.getReport(date);
+		if (objectMap.isEmpty()) {
+			return;
+		}
 
 		JTabbedPane tabbedPane = (JTabbedPane) (report.getComponent(0));
 		int totalTabs = tabbedPane.getTabCount();
 		for (int i = 0; i < totalTabs; i++) {
-			update(tabbedPane.getComponent(i));
+			if (tab == null || tabbedPane.getComponent(i).getName().equals(tab))
+				update(tabbedPane.getComponent(i));
 
 		}
 
-		JOptionPane.showMessageDialog(report, "Data loaded from " + date);
-
+		showLoadMessage();
 	}
 
 	public void update(Component c) {
@@ -108,8 +116,21 @@ public class LoadReport implements ActionListener {
 			loadTherapy((JPanel) c);
 		}
 		if (c.getName().equals(ProgressReport.BEHAVIOUR)) {
-			loadBehaviour((JPanel) c);
+			try {
+				loadBehaviour((JPanel) c);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
+		if (c.getName().equals(ProgressReport.NOTE)) {
+			loadNote((JPanel) c);
+		}
+
+		if (c.getName().equals(ProgressReport.SPECAIL_EVENT)) {
+			loadSpecialEvent((JPanel) c);
+		}
+
 	}
 
 	private void loadNote(JPanel panel) {
@@ -141,7 +162,7 @@ public class LoadReport implements ActionListener {
 		}
 	}
 
-	private void loadBehaviour(JPanel panel) {
+	private void loadBehaviour(JPanel panel) throws IOException {
 		Behaviour progress = (Behaviour) objectMap.get(ProgressReport.BEHAVIOUR);
 		if (progress == null) {
 			return;
@@ -151,13 +172,20 @@ public class LoadReport implements ActionListener {
 			System.out.println("((JCheckBox) pro[0]).getText())" + ((JCheckBox) pro[0]).getText());
 			if (progress.contains(((JCheckBox) pro[0]).getText())) {
 				ProgressObject objcet = progress.get(((JCheckBox) pro[0]).getText());
-				((JCheckBox) pro[0]).setSelected(true);
-				((JSpinner) pro[1]).setValue(Double.parseDouble(objcet.getProgress()));
+				String name = ((JLabel) pro[0]).getText();
+				if (progress.contains(name)) {
+					ProgressObject object = progress.get(name);
+					if (pro[1] instanceof JSpinner) {
+						((JSpinner) pro[1]).setValue(Double.parseDouble(object.getProgress()));
+					} else {
+						((JComboBox) pro[1]).setSelectedItem(getOption(name, object.getProgress(), ProgressReport.BEHAVIOUR));
+					}
+				}
 			}
 		}
 	}
 
-	private void loadSpecialEvent(JPanel panel) {
+	protected void loadSpecialEvent(JPanel panel) {
 
 	}
 
@@ -264,15 +292,15 @@ public class LoadReport implements ActionListener {
 				if (pro[1] instanceof JSpinner) {
 					((JSpinner) pro[1]).setValue(Double.parseDouble(object.getProgress()));
 				} else {
-					((JComboBox) pro[1]).setSelectedItem(getOption(name, object.getProgress()));
+					((JComboBox) pro[1]).setSelectedItem(getOption(name, object.getProgress(), ProgressReport.PROGRESS));
 				}
 			}
 		}
 
 	}
 
-	public String getOption(String name, String value) throws IOException {
-		Map<String, String> result = Util.getOptionMapForValue(name);
+	public String getOption(String name, String value, String type) throws IOException {
+		Map<String, String> result = Util.getOptionMapForValue(name, type);
 		for (String k : result.keySet()) {
 			if (result.get(k).equals(value)) {
 				return k;
@@ -280,5 +308,10 @@ public class LoadReport implements ActionListener {
 		}
 
 		return null;
+	}
+
+	protected void showLoadMessage() {
+		JOptionPane.showMessageDialog(report, "Data loaded from " + date);
+
 	}
 }

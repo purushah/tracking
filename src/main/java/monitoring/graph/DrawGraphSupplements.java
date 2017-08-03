@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import monitoring.monitoring.ProgressReport;
 import monitoring.monitoring.Util;
@@ -31,7 +32,7 @@ public class DrawGraphSupplements extends Graph {
 		Map<String, ReportObject> report = getReport();
 		List<String> list = getFilterList();
 
-		Map<String, List<Pair<String, String>>> progressObjectMap = new HashMap<String, List<Pair<String, String>>>();
+		Map<String, List<Pair<String, String>>> progressObjectMap = new TreeMap<String, List<Pair<String, String>>>(String.CASE_INSENSITIVE_ORDER);
 
 		for (String pp : list) {
 			if (!graphList.isEmpty()) {

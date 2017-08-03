@@ -263,15 +263,15 @@ public class AddNewItem implements ActionListener {
 				if (pro[1] instanceof JSpinner) {
 					((JSpinner) pro[1]).setValue(Double.parseDouble(objcet.getProgress()));
 					} else {
-					((JComboBox) pro[1]).setSelectedItem(getOption(name, objcet.getProgress()));
+					((JComboBox) pro[1]).setSelectedItem(getOption(name, objcet.getProgress(), ProgressReport.PROGRESS));
 				}
 			}
 		}
 
 	}
 	
-	public String getOption(String name, String value) throws IOException {
-	    Map<String, String> result = Util.getOptionMap(Util.getOptionType(name));
+	public String getOption(String name, String value, String type) throws IOException {
+	    Map<String, String> result = Util.getOptionMap(Util.getOptionType(name, type));
 	    for(String k: result.keySet()){
 	        if(result.get(k).equals(value)){
 	        	return k;

@@ -1,11 +1,12 @@
 package monitoring.pojo;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 public class ReportObject{
 
-	Map<String, BasicObject> objectMap = new HashMap<String, BasicObject>();
+	Map<String, BasicObject> objectMap = new TreeMap<String, BasicObject>(String.CASE_INSENSITIVE_ORDER);
+	
 
 	public ReportObject() {
 	}

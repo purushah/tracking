@@ -209,17 +209,8 @@ public class ProgressReport extends JPanel {
 		progressPanel.setLayout(new GridLayout(18, 1));
 
 		List<String> vegitables = Util.getFileList(BEHAVIOUR);
-		for (String vegi : vegitables) {
-			JPanel p = new JPanel();
-			p.setLayout(new MigLayout());
-			JCheckBox boxes = new JCheckBox(vegi);
-			p.add(boxes, "w 190!");
-			JSpinner spinner = getSpinner(progressPanel);
-			p.add(spinner, "w 70!");
-			progressPanel.add(p);
-			p.add(new JLabel("Times"));
+		updatePane(vegitables, progressPanel);
 
-		}
 
 	}
 
@@ -360,22 +351,27 @@ public class ProgressReport extends JPanel {
 				200, Image.SCALE_DEFAULT));
 
 		List<String> vegitables = Util.getFileList(PROGRESS);
-		for (String vegi : vegitables) {
-			String name = vegi;
+		updatePane(vegitables, progressPanel);
+	}
+	
+	
+	private void updatePane(List<String> objects, JPanel panel) throws IOException{
+		for (String object: objects) {
+			String name = object;
 			boolean isOption = false;
 			String option = null;
 			boolean JspinnerListerner = false;
 			String toolTip = null;
-			if (vegi.contains(ProgressConstant.seperator)) {
-				name = vegi.split(ProgressConstant.seperator)[0];
-				if (vegi.split(ProgressConstant.seperator).length > 1) {
-					if (vegi.split(ProgressConstant.seperator)[1].trim().endsWith("option")) {
+			if (object.contains(ProgressConstant.seperator)) {
+				name = object.split(ProgressConstant.seperator)[0];
+				if (object.split(ProgressConstant.seperator).length > 1) {
+					if (object.split(ProgressConstant.seperator)[1].trim().endsWith("option")) {
 						isOption = true;
-						option= vegi.split(ProgressConstant.seperator)[1].trim();
+						option= object.split(ProgressConstant.seperator)[1].trim();
 					}
 				}
-				if (vegi.split(ProgressConstant.seperator).length > 2) {
-					toolTip = vegi.split(ProgressConstant.seperator)[1];
+				if (object.split(ProgressConstant.seperator).length > 2) {
+					toolTip = object.split(ProgressConstant.seperator)[1];
 				}
 				if (name.equals("Sleep - Wakeup") || name.equals("Sleep - At")) {
 					JspinnerListerner = true;
@@ -399,10 +395,10 @@ public class ProgressReport extends JPanel {
 			if (isOption) {
 				p.add(getOptionList(option), "w 125!");
 			} else {
-				JSpinner spinner = getSpinner(progressPanel, JspinnerListerner);
+				JSpinner spinner = getSpinner(panel, JspinnerListerner);
 				p.add(spinner, "w 120!");
 			}
-			progressPanel.add(p);
+			panel.add(p);
 
 		}
 	}

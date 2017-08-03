@@ -10,7 +10,7 @@ public class LoadOlderReport extends LoadReport {
 	private javax.swing.JFileChooser jFileChooser1;
 
 	public LoadOlderReport(JPanel report) {
-		super(report);
+		super(report, null, null);
 		jFileChooser1 = new JFileChooser(Util.getPath());
 	}
 

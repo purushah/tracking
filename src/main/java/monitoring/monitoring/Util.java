@@ -70,8 +70,8 @@ public class Util {
 		return newResults;
 	}
 
-	public static String getOptionType(String option) throws IOException {
-		List<String> results = Files.readAllLines(new File(getPath() + "/" + ProgressReport.PROGRESS + ".txt").toPath(),
+	public static String getOptionType(String option, String type) throws IOException {
+		List<String> results = Files.readAllLines(new File(getPath() + "/" + type + ".txt").toPath(),
 				Charset.defaultCharset());
 		for (String result : results) {
 			if (result.split(ProgressConstant.seperator)[0].equals(option)) {
@@ -96,9 +96,9 @@ public class Util {
 
 	}
 	
-	public static Map<String, String> getOptionMapForValue(String name) throws IOException {
+	public static Map<String, String> getOptionMapForValue(String name, String type) throws IOException {
 		List<String> results = Files.readAllLines(
-				new File(getPath() + "/" + getOptionType(name.trim()) + ".txt").toPath(), Charset.defaultCharset());
+				new File(getPath() + "/" + getOptionType(name.trim(), type) + ".txt").toPath(), Charset.defaultCharset());
 		Map<String, String> newResults = new HashMap<String, String>();
 		for (String result : results) {
 			newResults.put(result.split(ProgressConstant.seperator)[0], result.split(ProgressConstant.seperator)[1]);

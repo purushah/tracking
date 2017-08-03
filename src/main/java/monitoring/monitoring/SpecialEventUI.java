@@ -5,6 +5,7 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.SortedSet;
@@ -37,6 +38,7 @@ public class SpecialEventUI {
 	// <editor-fold defaultstate="collapsed" desc="Generated Code">
 	private void initComponents() throws IOException {
 		List<String> sepecialEvent = Util.getFileList(ProgressReport.SPECAIL_EVENT);
+		Collections.sort(sepecialEvent);
 		sourceListModel = new SortedListModel();
 		sourceListModel.addAll(sepecialEvent.toArray(new String[0]));
 

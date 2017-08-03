@@ -62,9 +62,8 @@ public class SaveReport implements ActionListener {
 		}
 		try {
 
-			if (new File(Util.getPath() + "/" + date + ".txt").exists()) {
-				JOptionPane.showMessageDialog(null, "" + date + " is already there", "Error",
-						JOptionPane.ERROR_MESSAGE);
+			if(checkFileExist()){
+				return;
 			}
 
 			writer = new PrintWriter(new FileWriter(Util.getPath() + "/" + date + ".txt"));
@@ -165,13 +164,15 @@ public class SaveReport implements ActionListener {
 		for (Component c : panel.getComponents()) {
 			JPanel progress = (JPanel) c;
 			Component[] pro = progress.getComponents();
-			if (((JCheckBox) pro[0]).isSelected()) {
-				progressObject.add(new ProgressObject(((JCheckBox) pro[0]).getText(), ((JSpinner) pro[1]).getValue()));
+			String name = ((JLabel) pro[0]).getText();
+			if (pro[1] instanceof JSpinner) {
+				progressObject.add(new ProgressObject(name, ((JSpinner) pro[1]).getValue()));
+			} else {
+				progressObject.add(
+						new ProgressObject(name, Util.getOptionMapForValue(name, ProgressReport.BEHAVIOUR).get(((JComboBox) pro[1]).getSelectedItem())));
 			}
 		}
-
 		progressObject.write(writer);
-
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -294,7 +295,7 @@ public class SaveReport implements ActionListener {
 				progressObject.add(new ProgressObject(name, ((JSpinner) pro[1]).getValue()));
 			} else {
 				progressObject.add(
-						new ProgressObject(name, Util.getOptionMapForValue(name).get(((JComboBox) pro[1]).getSelectedItem())));
+						new ProgressObject(name, Util.getOptionMapForValue(name, ProgressReport.PROGRESS).get(((JComboBox) pro[1]).getSelectedItem())));
 			}
 		}
 
@@ -303,6 +304,18 @@ public class SaveReport implements ActionListener {
 
 	private String getDate() {
 		return new SimpleDateFormat("MM-dd-yyyy").format(new Date());
+
+	}
+	
+	protected boolean checkFileExist(){
+		if (new File(Util.getPath() + "/" + date + ".txt").exists()) {
+			JOptionPane.showMessageDialog(null, "" + date + " is already there", "Error",
+					JOptionPane.ERROR_MESSAGE);
+			return true;
+		}
+		else{
+			return false;
+		}
 
 	}
 }

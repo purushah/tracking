@@ -52,6 +52,9 @@ public class MainReport {
 
 		addNote(detailsPanel);
 
+		detailsPanel.add(new JLabel("   "));
+		addSpecialEvent(detailsPanel);
+
 		frame.pack();
 		frame.setVisible(true);
 		frame.setJMenuBar(getMenuBar());
@@ -83,6 +86,18 @@ public class MainReport {
 			detailsPanel.add(new JLabel(supplement));
 		}
 	}
+	
+	private static void addSpecialEvent(JPanel detailsPanel) throws IOException {
+		JLabel name = new JLabel("Specail Event");
+		name.setFont(new Font("Serif", Font.BOLD, 22));
+
+		detailsPanel.add(name);
+		Set<String> specialEvents = Util.getCurrentReport(ProgressReport.SPECAIL_EVENT);
+		for (String specialEvent : specialEvents) {
+			detailsPanel.add(new JLabel(specialEvent));
+		}
+	}
+
 
 	public static JMenuBar getMenuBar() {
 		JMenuBar menuBar = new JMenuBar();
@@ -107,7 +122,7 @@ public class MainReport {
 
 		menu.add(settingMenu);
 
-		JMenuItem reportMenu = new JMenuItem("Report");
+		JMenuItem reportMenu = new JMenuItem("Show Report");
 		reportMenu.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
@@ -118,6 +133,33 @@ public class MainReport {
 			}
 		});
 		menu.add(reportMenu);
+		
+		JMenuItem updateReportMent = new JMenuItem("Update Report");
+		updateReportMent.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					UpdateProgressReport.createAndShowGUI(0);
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+			}
+		});
+		menu.add(updateReportMent);
+		
+		
+		JMenuItem updateYesterDayReportMenu = new JMenuItem("Update Yesterday Report");
+		updateYesterDayReportMenu.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					UpdateProgressReport.createAndShowGUI(-1);
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+			}
+		});
+		menu.add(updateYesterDayReportMenu);
+		
+		
 		
 		JMenuItem noteMenu = new JMenuItem("Note");
 		noteMenu.addActionListener(new ActionListener() {
