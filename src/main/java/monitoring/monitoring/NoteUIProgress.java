@@ -3,6 +3,7 @@ package monitoring.monitoring;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
@@ -15,6 +16,9 @@ import javax.swing.JPopupMenu;
 import javax.swing.ListModel;
 import javax.swing.SwingUtilities;
 
+import com.inet.jortho.FileUserDictionary;
+import com.inet.jortho.SpellChecker;
+
 @SuppressWarnings("deprecation,rawtypes")
 public class NoteUIProgress {
 	JPanel panel;
@@ -23,7 +27,7 @@ public class NoteUIProgress {
 	private javax.swing.JList<String> sourceList;
 	private javax.swing.JScrollPane scrollPane;
 	private javax.swing.JTextField eventText;
-	private SortedListModel sourceListModel;
+	protected SortedListModel sourceListModel;
 
 	JPopupMenu popupMenu;
 	JMenuItem removeMenu;
@@ -34,14 +38,27 @@ public class NoteUIProgress {
 	}
 
 	@SuppressWarnings("unchecked")
-	// <editor-fold defaultstate="collapsed" desc="Generated Code">
-	private void initComponents() throws IOException {
+	protected void initComponents() throws IOException {
 		sourceListModel = new SortedListModel();
 		eventText = new javax.swing.JTextField();
 		addNote = new javax.swing.JButton();
 		scrollPane = new javax.swing.JScrollPane();
 		sourceList = new javax.swing.JList(sourceListModel);
 		jLabel1 = new javax.swing.JLabel();
+
+		// Create user dictionary in the current working directory of your
+		// application
+		SpellChecker.setUserDictionaryProvider(new FileUserDictionary());
+
+		// Load the configuration from the file dictionaries.cnf and
+		// use the current locale or the first language as default
+		// You can download the dictionary files from
+		// http://sourceforge.net/projects/jortho/files/Dictionaries/
+		SpellChecker.registerDictionaries(new URL("file:///Users/purushah/Documents/workspace/tracking/monitoring/"),
+				null);
+
+		// enable the spell checking on the text component with all features
+		SpellChecker.register(eventText);
 
 		eventText.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -59,8 +76,8 @@ public class NoteUIProgress {
 		addNote.setText("Add");
 
 		scrollPane.setViewportView(sourceList);
-		jLabel1.setText("Add Note");
-		scrollPane.setName(ProgressReport.NOTE);
+		jLabel1.setText("Add " + getName());
+		scrollPane.setName(getName());
 
 		popupMenu = new JPopupMenu();
 		popupMenu.add(removeMenu = new JMenuItem("Remove"));
@@ -182,18 +199,19 @@ public class NoteUIProgress {
 
 	private void removeListener(java.awt.event.ActionEvent evt) {
 		Object selected[] = sourceList.getSelectedValues();
-	      clearDestinationSelected();
+		clearDestinationSelected();
 
+	}
 
+	private void clearDestinationSelected() {
+		Object selected[] = sourceList.getSelectedValues();
+		for (int i = selected.length - 1; i >= 0; --i) {
+			sourceListModel.removeElement(selected[i]);
+		}
+		sourceList.getSelectionModel().clearSelection();
+	}
+
+	protected String getName() {
+		return ProgressReport.NOTE;
+	}
 }
-
-private void clearDestinationSelected() {
-    Object selected[] = sourceList.getSelectedValues();
-    for (int i = selected.length - 1; i >= 0; --i) {
-    	sourceListModel.removeElement(selected[i]);
-    }
-    sourceList.getSelectionModel().clearSelection();
-  }
-
-}
-

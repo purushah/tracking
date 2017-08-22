@@ -10,7 +10,6 @@ import javax.swing.JToolBar;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
-import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -27,15 +26,12 @@ import javax.swing.UIManager;
 public class UpdateProgressReport extends ProgressReport {
 
 	int dateOffset;
-	public UpdateProgressReport(int dateOffset) throws IOException {
-		super();
+	public UpdateProgressReport(int dateOffset) throws Exception {
+		super(Util.getDayDate(dateOffset));
 		this.dateOffset = dateOffset;
 	}
-	
-	
 
-
-	public static void createAndShowGUI(int dateOffset) throws IOException {
+	public static void createAndShowGUI(int dateOffset) throws Exception {
 		// Create and set up the window.
 
 		UpdateProgressReport report = new UpdateProgressReport(dateOffset);
@@ -55,7 +51,7 @@ public class UpdateProgressReport extends ProgressReport {
 		frame.pack();
 
 		frame.setVisible(true);
-		frame.setSize(new Dimension(1200, 800));
+		frame.setSize(new Dimension(1400, 850));
 
 	}
 
@@ -68,8 +64,8 @@ public class UpdateProgressReport extends ProgressReport {
 				try {
 					// Turn off metal's use of bold fonts
 					UIManager.put("swing.boldMetal", Boolean.FALSE);
-					createAndShowGUI();
-				} catch (IOException ex) {
+					createAndShowGUI(0);
+				} catch (Exception ex) {
 					Logger.getLogger(UpdateProgressReport.class.getName()).log(Level.SEVERE, null, ex);
 				}
 			}
@@ -97,7 +93,6 @@ public class UpdateProgressReport extends ProgressReport {
 		
 		JButton loadPreviousDay = new javax.swing.JButton("Load Previous Day");
 		loadPreviousDay.addActionListener(new LoadReport(panel, ProgressReport.SUPPLEMENTS, Util.getDayDate(dateOffset-1)));
-
 		
 		toolBar.add(update);
 		toolBar.addSeparator();

@@ -173,6 +173,10 @@ public class Util {
 	public static String getPath() {
 		return "/Users/purushah/Documents/mydoc/doc/neo report/progress/items";
 	}
+	
+	public static String getPathDir(String date) {
+		return getPath() + "/" + date;
+	}
 
 	public static void writeObject(PrintWriter bw, List<String> objects) {
 		for (String o : objects) {
@@ -202,7 +206,7 @@ public class Util {
 
 	public static String getLatestReportDateAVailabe() throws IOException {
 		File f = new File(getPath());
-		File[] files = f.listFiles();
+		File[] files = getFiles(f);
 		Arrays.sort(files, new Comparator<File>() {
 			public int compare(File o1, File o2) {
 				try {
@@ -218,17 +222,7 @@ public class Util {
 
 	public static File[] getLatestReportDateAVailabe(int count) throws IOException {
 		File f = new File(getPath());
-		File[] files = f.listFiles(new FileFilter() {
-
-			public boolean accept(File pathname) {
-				try {
-					getDate(getFileNameWithoutExtension(pathname));
-				} catch (ParseException e) {
-					return false;
-				}
-				return true;
-			}
-		});
+		File[] files = getFiles(f);
 		Arrays.sort(files, new Comparator<File>() {
 			public int compare(File o1, File o2) {
 				try {
@@ -244,8 +238,22 @@ public class Util {
 		}
 		return files;
 	}
+	
+	private static File[] getFiles(File f){
+		return f.listFiles(new FileFilter() {
 
-	private static String getFileNameWithoutExtension(File file) {
+			public boolean accept(File pathname) {
+				try {
+					getDate(getFileNameWithoutExtension(pathname));
+				} catch (ParseException e) {
+					return false;
+				}
+				return pathname.isFile() && true ;
+			}
+		});
+	}
+
+	public static String getFileNameWithoutExtension(File file) {
 		String fileName = file.getName();
 		int pos = fileName.lastIndexOf(".");
 		if (pos > 0) {
@@ -344,7 +352,7 @@ public class Util {
 			public boolean accept(File pathname) {
 				try {
 					Date date = getDate(getFileNameWithoutExtension(pathname));
-					return date.compareTo(startDate) >= 0 && date.compareTo(endDate) <= 0;
+					return pathname.isFile() && date.compareTo(startDate) >= 0 && date.compareTo(endDate) <= 0;
 				} catch (ParseException e) {
 					return false;
 				}

@@ -17,6 +17,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JFrame;
 import javax.swing.JComponent;
@@ -61,6 +62,7 @@ public class ProgressReport extends JPanel {
 	public static String NOTE = "Note";
 	public static String ATEC = "ATEC";
 	public static String BEHAVIOUR = "Behaviour";
+	public static String ISSUES = "Issues";
 	public static String OPTION_LIST = "option";
 	public static String FOOD_COLOR_LIST = "food_color";
 
@@ -68,9 +70,15 @@ public class ProgressReport extends JPanel {
 
 	JTabbedPane tabbedPane = new JTabbedPane();
 
-	public ProgressReport() throws IOException {
-		super(new GridLayout(1, 1));
+	String date;
 
+	public ProgressReport() throws Exception {
+		this(Util.getDayDate(0));
+	}
+
+	public ProgressReport(String date) throws Exception {
+		super(new GridLayout(1, 1));
+		this.date = date;
 		addVegetables();
 		addFruits();
 		addJucing();
@@ -82,6 +90,7 @@ public class ProgressReport extends JPanel {
 		addBehaviour();
 		addSpecailEvent();
 		addNote();
+		addIssues();
 		addReport();
 		addProgress();
 		addATEC();
@@ -95,11 +104,21 @@ public class ProgressReport extends JPanel {
 		tabbedPane.add(NOTE, progressPanel);
 
 	}
+	
+	private void addIssues() throws IOException {
+		JComponent progressPanel = makeTextPanel(ISSUES);
+		new IssuesUI((JPanel) progressPanel);
+		tabbedPane.add(ISSUES, progressPanel);
 
-	private void addReport() throws IOException {
+	}
+
+
+	private void addReport() throws Exception {
 		JComponent reportPanel = makeTextPanel(Report);
-		new ReportUI((JPanel) reportPanel);
-		tabbedPane.add(Report, reportPanel);
+        JScrollPane scrollPane = new JScrollPane(reportPanel);
+        tabbedPane.add(scrollPane);        
+		new ReportUI((JPanel) reportPanel, date);
+		tabbedPane.add(Report, scrollPane);
 
 	}
 
@@ -125,7 +144,7 @@ public class ProgressReport extends JPanel {
 	 * Create the GUI and show it. For thread safety, this method should be
 	 * invoked from the event dispatch thread.
 	 */
-	public static void createAndShowGUI() throws IOException {
+	public static void createAndShowGUI() throws Exception {
 		// Create and set up the window.
 
 		JFrame frame = new JFrame("Neo's Progress report");
@@ -156,7 +175,7 @@ public class ProgressReport extends JPanel {
 					// Turn off metal's use of bold fonts
 					UIManager.put("swing.boldMetal", Boolean.FALSE);
 					createAndShowGUI();
-				} catch (IOException ex) {
+				} catch (Exception ex) {
 					Logger.getLogger(ProgressReport.class.getName()).log(Level.SEVERE, null, ex);
 				}
 			}
@@ -194,11 +213,7 @@ public class ProgressReport extends JPanel {
 			p.setLayout(new MigLayout());
 			JCheckBox boxes = new JCheckBox(vegi);
 			p.add(boxes, "w 190!");
-			JSpinner spinner = getSpinner(progressPanel);
-			p.add(spinner, "w 70!");
 			progressPanel.add(p);
-			p.add(new JLabel("Hours/Times"));
-
 		}
 
 	}
@@ -210,7 +225,6 @@ public class ProgressReport extends JPanel {
 
 		List<String> vegitables = Util.getFileList(BEHAVIOUR);
 		updatePane(vegitables, progressPanel);
-
 
 	}
 
@@ -316,8 +330,7 @@ public class ProgressReport extends JPanel {
 			supplementPanel.add(p);
 		}
 	}
-	
-	
+
 	private void updateSupplements(JComponent supplementPanel) throws IOException {
 		supplementPanel.removeAll();
 		supplementPanel.setLayout(new GridLayout(18, 4));
@@ -353,10 +366,9 @@ public class ProgressReport extends JPanel {
 		List<String> vegitables = Util.getFileList(PROGRESS);
 		updatePane(vegitables, progressPanel);
 	}
-	
-	
-	private void updatePane(List<String> objects, JPanel panel) throws IOException{
-		for (String object: objects) {
+
+	private void updatePane(List<String> objects, JPanel panel) throws IOException {
+		for (String object : objects) {
 			String name = object;
 			boolean isOption = false;
 			String option = null;
@@ -367,7 +379,7 @@ public class ProgressReport extends JPanel {
 				if (object.split(ProgressConstant.seperator).length > 1) {
 					if (object.split(ProgressConstant.seperator)[1].trim().endsWith("option")) {
 						isOption = true;
-						option= object.split(ProgressConstant.seperator)[1].trim();
+						option = object.split(ProgressConstant.seperator)[1].trim();
 					}
 				}
 				if (object.split(ProgressConstant.seperator).length > 2) {
@@ -402,7 +414,7 @@ public class ProgressReport extends JPanel {
 
 		}
 	}
-	
+
 	private void addATEC() throws IOException {
 		JPanel progressPanel = makeTextPanel(ATEC);
 		tabbedPane.addTab(ATEC, progressPanel);
@@ -422,7 +434,6 @@ public class ProgressReport extends JPanel {
 		}
 
 	}
-
 
 	private void addSpecailEvent() throws IOException {
 
@@ -533,7 +544,7 @@ public class ProgressReport extends JPanel {
 
 	}
 
-	private JComboBox<String> getOptionList(String option ) throws IOException {
+	private JComboBox<String> getOptionList(String option) throws IOException {
 		JComboBox<String> jlst = new JComboBox(Util.getOptionList(option).toArray(new String[0]));
 		return jlst;
 

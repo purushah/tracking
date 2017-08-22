@@ -16,6 +16,7 @@ import monitoring.pojo.Behaviour;
 import monitoring.pojo.DetoxBath;
 import monitoring.pojo.EssentialOil;
 import monitoring.pojo.Fruits;
+import monitoring.pojo.IssuesObject;
 import monitoring.pojo.Juicing;
 import monitoring.pojo.Note;
 import monitoring.pojo.Progress;
@@ -79,6 +80,10 @@ public class ObjectFactory {
 		if (name.equals(ProgressReport.BEHAVIOUR)) {
 			return new Behaviour();
 		}
+		if (name.equals(ProgressReport.ISSUES)) {
+			return new IssuesObject();
+		}
+
 
 		return null;
 	}

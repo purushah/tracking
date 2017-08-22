@@ -30,7 +30,7 @@ public class MainReport {
 	public MainReport(String title) throws IOException {
 	}
 
-	public static void main(String[] args) throws IOException, ParseException {
+	public static void main(String[] args) throws Exception {
 
 		JPanel graphPanel = new JPanel();
 		JPanel detailsPanel = new JPanel();
@@ -54,6 +54,10 @@ public class MainReport {
 
 		detailsPanel.add(new JLabel("   "));
 		addSpecialEvent(detailsPanel);
+		
+		detailsPanel.add(new JLabel("   "));
+		addIssues(detailsPanel);
+
 
 		frame.pack();
 		frame.setVisible(true);
@@ -98,6 +102,17 @@ public class MainReport {
 		}
 	}
 
+	private static void addIssues(JPanel detailsPanel) throws IOException {
+		JLabel name = new JLabel("Issues");
+		name.setFont(new Font("Serif", Font.BOLD, 22));
+
+		detailsPanel.add(name);
+		Set<String> supplements = Util.getCurrentReport(ProgressReport.ISSUES);
+		for (String supplement : supplements) {
+			detailsPanel.add(new JLabel(supplement));
+		}
+	}
+
 
 	public static JMenuBar getMenuBar() {
 		JMenuBar menuBar = new JMenuBar();
@@ -127,7 +142,7 @@ public class MainReport {
 			public void actionPerformed(ActionEvent e) {
 				try {
 					ProgressReport.createAndShowGUI();
-				} catch (IOException e1) {
+				} catch (Exception e1) {
 					e1.printStackTrace();
 				}
 			}
@@ -139,7 +154,7 @@ public class MainReport {
 			public void actionPerformed(ActionEvent e) {
 				try {
 					UpdateProgressReport.createAndShowGUI(0);
-				} catch (IOException e1) {
+				} catch (Exception e1) {
 					e1.printStackTrace();
 				}
 			}
@@ -152,7 +167,7 @@ public class MainReport {
 			public void actionPerformed(ActionEvent e) {
 				try {
 					UpdateProgressReport.createAndShowGUI(-1);
-				} catch (IOException e1) {
+				} catch (Exception e1) {
 					e1.printStackTrace();
 				}
 			}
@@ -186,6 +201,23 @@ public class MainReport {
 		menu.add(specialEvent);
 
 		menuBar.add(menu);
+		
+		JMenuItem report = new JMenuItem("Report");
+		report.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					DisplayReport.createAndShowGUI();
+				} catch (Exception e1) {
+					e1.printStackTrace();
+				}
+			}
+		});
+		menu.add(report);
+
+		menuBar.add(menu);
+
+		
+		
 		return menuBar;
 	}
 

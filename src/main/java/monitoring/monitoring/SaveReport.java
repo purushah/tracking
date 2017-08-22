@@ -33,6 +33,7 @@ import monitoring.pojo.DosageObject;
 import monitoring.pojo.EssentialOil;
 import monitoring.pojo.FrementedFood;
 import monitoring.pojo.Fruits;
+import monitoring.pojo.IssuesObject;
 import monitoring.pojo.Juicing;
 import monitoring.pojo.Note;
 import monitoring.pojo.Progress;
@@ -72,6 +73,10 @@ public class SaveReport implements ActionListener {
 			int totalTabs = tabbedPane.getTabCount();
 			for (int i = 0; i < totalTabs; i++) {
 				Component c = tabbedPane.getComponent(i);
+				if (!(c instanceof JPanel)) {
+					continue;
+				}
+				
 				if (c.getName().equals(ProgressReport.VEGI)) {
 					saveVegitables((JPanel) c);
 				}
@@ -107,6 +112,10 @@ public class SaveReport implements ActionListener {
 
 				if (c.getName().equals(ProgressReport.SPECAIL_EVENT)) {
 					saveSpecialEvent((JPanel) c);
+				}
+				
+				if (c.getName().equals(ProgressReport.ISSUES)) {
+					saveIssues((JPanel) c);
 				}
 
 				if (c.getName().equals(ProgressReport.THERAPY)) {
@@ -152,7 +161,7 @@ public class SaveReport implements ActionListener {
 			JPanel progress = (JPanel) c;
 			Component[] pro = progress.getComponents();
 			if (((JCheckBox) pro[0]).isSelected()) {
-				progressObject.add(new ProgressObject(((JCheckBox) pro[0]).getText(), ((JSpinner) pro[1]).getValue()));
+				progressObject.add(new ProgressObject(((JCheckBox) pro[0]).getText(), "1"));
 			}
 		}
 
@@ -201,6 +210,30 @@ public class SaveReport implements ActionListener {
 			}
 		}
 		Util.writeFileList(ProgressReport.SPECAIL_EVENT, newList);
+		event.write(writer);
+
+	}
+	
+	
+	private void saveIssues(JPanel panel) throws Exception {
+		IssuesObject event = new IssuesObject();
+		List<String> newList = new ArrayList<String>();
+		for (Component c : panel.getComponents()) {
+			if (!StringUtils.isEmpty(c.getName())) {
+				if (c.getName().equals(ProgressReport.ISSUES)) {
+					ListModel model = ((JList) ((JViewport) ((JScrollPane) c).getComponent(0)).getComponent(0))
+							.getModel();
+
+					for (int i = 0; i < model.getSize(); i++) {
+						event.add(model.getElementAt(i).toString());
+						newList.add(model.getElementAt(i).toString());
+					}
+				}
+			}
+		}
+		if (!newList.isEmpty()) {
+			Util.writeFileList(ProgressReport.ISSUES, newList);
+		}
 		event.write(writer);
 
 	}

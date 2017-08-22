@@ -3,6 +3,7 @@ package monitoring.monitoring;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -13,6 +14,9 @@ import java.util.TreeSet;
 import javax.swing.AbstractListModel;
 import javax.swing.JPanel;
 import javax.swing.ListModel;
+
+import com.inet.jortho.FileUserDictionary;
+import com.inet.jortho.SpellChecker;
 
 public class SpecialEventUI {
 	JPanel panel;
@@ -54,6 +58,18 @@ public class SpecialEventUI {
 		addButton = new javax.swing.JButton();
 		removeButton = new javax.swing.JButton();
 		jLabel1 = new javax.swing.JLabel();
+		
+		// Create user dictionary in the current working directory of your application
+        SpellChecker.setUserDictionaryProvider( new FileUserDictionary() );
+        
+        // Load the configuration from the file dictionaries.cnf and 
+        // use the current locale or the first language as default
+        // You can download the dictionary files from http://sourceforge.net/projects/jortho/files/Dictionaries/
+        SpellChecker.registerDictionaries( new URL("file:///Users/purushah/Documents/workspace/tracking/monitoring/"), null );
+
+
+        // enable the spell checking on the text component with all features
+        SpellChecker.register( eventText );
 
 		eventText.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -123,7 +139,7 @@ public class SpecialEventUI {
 												.addComponent(addButton).addGap(30, 30, 30).addComponent(removeButton))
 										.addGroup(layout.createSequentialGroup()
 												.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-												.addComponent(sourceScrollPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 480,
+												.addComponent(sourceScrollPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 600,
 														javax.swing.GroupLayout.PREFERRED_SIZE)))))
 				.addContainerGap(104, Short.MAX_VALUE)));
 

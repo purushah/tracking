@@ -15,6 +15,9 @@ import javax.swing.JPopupMenu;
 import javax.swing.ListModel;
 import javax.swing.SwingUtilities;
 
+import com.inet.jortho.FileUserDictionary;
+import com.inet.jortho.SpellChecker;
+
 @SuppressWarnings("deprecation,rawtypes")
 public class NoteUI {
 	JPanel panel;
@@ -22,8 +25,8 @@ public class NoteUI {
 	private javax.swing.JLabel jLabel1;
 	private javax.swing.JList<String> sourceList;
 	private javax.swing.JScrollPane scrollPane;
-	private javax.swing.JTextField eventText;
-	private SortedListModel sourceListModel;
+	private javax.swing.JEditorPane eventText;
+	protected SortedListModel sourceListModel;
 
 	JPopupMenu popupMenu;
 	JMenuItem removeMenu;
@@ -35,19 +38,28 @@ public class NoteUI {
 
 	@SuppressWarnings("unchecked")
 	// <editor-fold defaultstate="collapsed" desc="Generated Code">
-	private void initComponents() throws IOException {
+	protected void initComponents() throws IOException {
 		sourceListModel = new SortedListModel();
-		eventText = new javax.swing.JTextField();
+		eventText = new javax.swing.JEditorPane();
 		addNote = new javax.swing.JButton();
 		scrollPane = new javax.swing.JScrollPane();
 		sourceList = new javax.swing.JList(sourceListModel);
 		jLabel1 = new javax.swing.JLabel();
 
-		eventText.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				jTextField1ActionPerformed(evt);
-			}
-		});
+		eventText.setText("This is a simppler textt with spellingg errors.");
+
+		// Create user dictionary in the current working directory of your
+		// application
+		SpellChecker.setUserDictionaryProvider(new FileUserDictionary());
+
+		// Load the configuration from the file dictionaries.cnf and
+		// use the current locale or the first language as default
+		// You can download the dictionary files from
+		// http://sourceforge.net/projects/jortho/files/Dictionaries/
+		SpellChecker.registerDictionaries(null, null);
+
+		// enable the spell checking on the text component with all features
+		SpellChecker.register(eventText);
 
 		addNote.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -59,7 +71,7 @@ public class NoteUI {
 		addNote.setText("Add");
 
 		scrollPane.setViewportView(sourceList);
-		jLabel1.setText("Add Note");
+		jLabel1.setText("Add " + getName());
 		scrollPane.setName(ProgressReport.NOTE);
 
 		popupMenu = new JPopupMenu();
@@ -120,15 +132,6 @@ public class NoteUI {
 	 *            the command line arguments
 	 */
 	public static void main(String args[]) {
-		/* Set the Nimbus look and feel */
-		// <editor-fold defaultstate="collapsed" desc=" Look and feel setting
-		// code (optional) ">
-		/*
-		 * If Nimbus (introduced in Java SE 6) is not available, stay with the
-		 * default look and feel. For details see
-		 * http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.
-		 * html
-		 */
 		try {
 			for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
 				if ("Nimbus".equals(info.getName())) {
@@ -182,17 +185,20 @@ public class NoteUI {
 
 	private void removeListener(java.awt.event.ActionEvent evt) {
 		Object selected[] = sourceList.getSelectedValues();
-	      clearDestinationSelected();
+		clearDestinationSelected();
 
+	}
 
-}
+	private void clearDestinationSelected() {
+		Object selected[] = sourceList.getSelectedValues();
+		for (int i = selected.length - 1; i >= 0; --i) {
+			sourceListModel.removeElement(selected[i]);
+		}
+		sourceList.getSelectionModel().clearSelection();
+	}
 
-private void clearDestinationSelected() {
-    Object selected[] = sourceList.getSelectedValues();
-    for (int i = selected.length - 1; i >= 0; --i) {
-    	sourceListModel.removeElement(selected[i]);
-    }
-    sourceList.getSelectionModel().clearSelection();
-  }
+	protected String getName() {
+		return ProgressReport.NOTE;
+	}
 
 }

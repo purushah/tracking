@@ -60,8 +60,10 @@ public class LoadReport implements ActionListener {
 		JTabbedPane tabbedPane = (JTabbedPane) (report.getComponent(0));
 		int totalTabs = tabbedPane.getTabCount();
 		for (int i = 0; i < totalTabs; i++) {
-			if (tab == null || tabbedPane.getComponent(i).getName().equals(tab))
+			if ((tabbedPane.getComponent(i) instanceof JPanel) && (tab == null
+					|| tabbedPane.getComponent(i).getName().equals(tab))) {
 				update(tabbedPane.getComponent(i));
+			}
 
 		}
 
@@ -111,6 +113,11 @@ public class LoadReport implements ActionListener {
 		if (c.getName().equals(ProgressReport.SPECAIL_EVENT)) {
 			loadSpecialEvent((JPanel) c);
 		}
+		
+		if (c.getName().equals(ProgressReport.ISSUES)) {
+			loadIssues((JPanel) c);
+		}
+
 
 		if (c.getName().equals(ProgressReport.THERAPY)) {
 			loadTherapy((JPanel) c);
@@ -125,10 +132,6 @@ public class LoadReport implements ActionListener {
 		}
 		if (c.getName().equals(ProgressReport.NOTE)) {
 			loadNote((JPanel) c);
-		}
-
-		if (c.getName().equals(ProgressReport.SPECAIL_EVENT)) {
-			loadSpecialEvent((JPanel) c);
 		}
 
 	}
@@ -157,7 +160,6 @@ public class LoadReport implements ActionListener {
 			if (progress.contains(((JCheckBox) pro[0]).getText())) {
 				ProgressObject objcet = progress.get(((JCheckBox) pro[0]).getText());
 				((JCheckBox) pro[0]).setSelected(true);
-				((JSpinner) pro[1]).setValue(Double.parseDouble(objcet.getProgress()));
 			}
 		}
 	}
@@ -167,19 +169,23 @@ public class LoadReport implements ActionListener {
 		if (progress == null) {
 			return;
 		}
+		loadOptionObject(panel, progress, ProgressReport.BEHAVIOUR);
+	}
+	
+	
+	private void loadOptionObject(JPanel panel, Progress progressObject, String type) throws IOException{
+		if(progressObject==null){
+			return;
+		}
 		for (Component c : panel.getComponents()) {
 			Component[] pro = ((JPanel) c).getComponents();
-			System.out.println("((JCheckBox) pro[0]).getText())" + ((JCheckBox) pro[0]).getText());
-			if (progress.contains(((JCheckBox) pro[0]).getText())) {
-				ProgressObject objcet = progress.get(((JCheckBox) pro[0]).getText());
-				String name = ((JLabel) pro[0]).getText();
-				if (progress.contains(name)) {
-					ProgressObject object = progress.get(name);
-					if (pro[1] instanceof JSpinner) {
-						((JSpinner) pro[1]).setValue(Double.parseDouble(object.getProgress()));
-					} else {
-						((JComboBox) pro[1]).setSelectedItem(getOption(name, object.getProgress(), ProgressReport.BEHAVIOUR));
-					}
+			String name = ((JLabel) pro[0]).getText();
+			if (progressObject.contains(name)) {
+				ProgressObject object = progressObject.get(name);
+				if (pro[1] instanceof JSpinner) {
+					((JSpinner) pro[1]).setValue(Double.parseDouble(object.getProgress()));
+				} else {
+					((JComboBox) pro[1]).setSelectedItem(getOption(name, object.getProgress(), type));
 				}
 			}
 		}
@@ -188,6 +194,11 @@ public class LoadReport implements ActionListener {
 	protected void loadSpecialEvent(JPanel panel) {
 
 	}
+	
+	protected void loadIssues(JPanel panel) {
+
+	}
+
 
 	private void loadJucing(JPanel panel) {
 		loadObject(panel, objectMap.get(ProgressReport.JUICING));
@@ -284,18 +295,7 @@ public class LoadReport implements ActionListener {
 
 	public void loadProgress(JPanel panel) throws IOException {
 		Progress progress = (Progress) objectMap.get(ProgressReport.PROGRESS);
-		for (Component c : panel.getComponents()) {
-			Component[] pro = ((JPanel) c).getComponents();
-			String name = ((JLabel) pro[0]).getText();
-			if (progress.contains(name)) {
-				ProgressObject object = progress.get(name);
-				if (pro[1] instanceof JSpinner) {
-					((JSpinner) pro[1]).setValue(Double.parseDouble(object.getProgress()));
-				} else {
-					((JComboBox) pro[1]).setSelectedItem(getOption(name, object.getProgress(), ProgressReport.PROGRESS));
-				}
-			}
-		}
+		loadOptionObject(panel, progress, ProgressReport.PROGRESS);
 
 	}
 
