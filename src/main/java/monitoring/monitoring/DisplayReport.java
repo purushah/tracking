@@ -2,7 +2,6 @@ package monitoring.monitoring;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -24,10 +23,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-
 import org.apache.commons.io.FileUtils;
-
-import monitoring.pojo.BasicObject;
 import monitoring.pojo.ReportObject;
 import net.miginfocom.swing.MigLayout;
 
@@ -105,7 +101,7 @@ public class DisplayReport extends JPanel {
 
 	public void pouplateImage(File dir) throws CannotRealizeException, MalformedURLException, IOException {
 		if (dir.exists()) {
-			String[] extensions = { "jpeg", "png", "jpg" };
+			String[] extensions = { "jpeg", "png", "jpg", "JPG" };
 			for (File file : FileUtils.listFiles(dir, extensions, true)) {
 				addImage(file, null);
 			}

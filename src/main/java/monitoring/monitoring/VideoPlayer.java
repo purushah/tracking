@@ -10,6 +10,7 @@ import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
@@ -66,9 +67,18 @@ public class VideoPlayer {
 				return new TutorialRenderCallbackAdapter();
 			}
 		};
+		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+
+		frame.addWindowListener(new java.awt.event.WindowAdapter() {
+		    @Override
+		    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+		    	mediaPlayerComponent.getMediaPlayer().stop();
+		        frame.hide();
+		        
+		    }
+		});
 		frame.setVisible(true);
 		mediaPlayerComponent.getMediaPlayer().playMedia(args);
-		mediaPlayerComponent.getMediaPlayer().stop();
 		// controlsPanel = new PlayerControlsPanel(mediaPlayerComponent);
 
 	}

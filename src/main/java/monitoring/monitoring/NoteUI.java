@@ -3,12 +3,6 @@ package monitoring.monitoring;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.SortedSet;
-import java.util.TreeSet;
-import javax.swing.AbstractListModel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -18,7 +12,6 @@ import javax.swing.SwingUtilities;
 import com.inet.jortho.FileUserDictionary;
 import com.inet.jortho.SpellChecker;
 
-@SuppressWarnings("deprecation,rawtypes")
 public class NoteUI {
 	JPanel panel;
 	private javax.swing.JButton addNote;

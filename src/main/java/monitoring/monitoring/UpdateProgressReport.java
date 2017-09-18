@@ -64,7 +64,7 @@ public class UpdateProgressReport extends ProgressReport {
 				try {
 					// Turn off metal's use of bold fonts
 					UIManager.put("swing.boldMetal", Boolean.FALSE);
-					createAndShowGUI(0);
+					createAndShowGUI(-1);
 				} catch (Exception ex) {
 					Logger.getLogger(UpdateProgressReport.class.getName()).log(Level.SEVERE, null, ex);
 				}

@@ -16,6 +16,9 @@ import javax.swing.JPanel;
 
 import org.apache.commons.io.FileUtils;
 
+import com.inet.jortho.FileUserDictionary;
+import com.inet.jortho.SpellChecker;
+
 import net.miginfocom.swing.MigLayout;
 
 import java.awt.Image;
@@ -75,6 +78,10 @@ public class ReportUI {
 		jLabel2 = new javax.swing.JLabel();
 		fileNameLabel = new javax.swing.JLabel();
 		jPanel1 = new javax.swing.JPanel();
+
+		SpellChecker.setUserDictionaryProvider(new FileUserDictionary());
+		SpellChecker.registerDictionaries(null, null);
+		SpellChecker.register(captionTextField);
 
 		jButton1.setText("Browse");
 		jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -148,7 +155,7 @@ public class ReportUI {
 	public void pouplateImage() throws CannotRealizeException, MalformedURLException, IOException {
 		File dir = new File(Util.getPathDir(date));
 		if (dir.exists()) {
-			String[] extensions = { "jpeg", "png", "jpg" };
+			String[] extensions = { "jpeg", "png", "jpg", "JPG" };
 			for (File file : FileUtils.listFiles(dir, extensions, true)) {
 				addImage(file, null);
 			}
@@ -158,7 +165,7 @@ public class ReportUI {
 	}
 
 	private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {
-		javax.swing.JFileChooser jFileChooser1 = new JFileChooser("/Users/purushah/Documents/");
+		javax.swing.JFileChooser jFileChooser1 = new JFileChooser("/Users/purushah/Downloads/");
 		jFileChooser1.showOpenDialog(panel);
 		fileNameLabel.setText(jFileChooser1.getSelectedFile().getAbsolutePath());
 	}
@@ -203,7 +210,7 @@ public class ReportUI {
 		jPanel1.add(new JLabel(
 				Files.readAllLines(new File(name.substring(0, name.lastIndexOf(".")) + ".txt").toPath()).get(0)),
 				"wrap");
-		
+
 		jPanel1.add(new JLabel(""), "wrap");
 
 	}
@@ -213,15 +220,6 @@ public class ReportUI {
 	 *            the command line arguments
 	 */
 	public static void main(String args[]) {
-		/* Set the Nimbus look and feel */
-		// <editor-fold defaultstate="collapsed" desc=" Look and feel setting
-		// code (optional) ">
-		/*
-		 * If Nimbus (introduced in Java SE 6) is not available, stay with the
-		 * default look and feel. For details see
-		 * http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.
-		 * html
-		 */
 		try {
 			for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
 				if ("Nimbus".equals(info.getName())) {
