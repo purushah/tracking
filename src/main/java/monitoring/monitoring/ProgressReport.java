@@ -51,6 +51,7 @@ public class ProgressReport extends JPanel {
 	public static String FRUITS = "Fruits";
 	public static String JUICING = "Juicing";
 	public static String Report = "Report";
+	public static String MAIL = "Discussion";
 	public static String SUPPLEMENTS = "Supplements";
 	public static String HOMOEPATHY = "Homeopathy";
 	public static String THERAPY = "Therapy";
@@ -92,6 +93,7 @@ public class ProgressReport extends JPanel {
 		addNote();
 		addIssues();
 		addReport();
+		addMail();
 		addProgress();
 		addATEC();
 		add(tabbedPane);
@@ -121,6 +123,16 @@ public class ProgressReport extends JPanel {
 		tabbedPane.add(Report, scrollPane);
 
 	}
+	
+	private void addMail() throws Exception {
+		JComponent mailPanel = makeTextPanel(MAIL);
+        JScrollPane scrollPane = new JScrollPane(mailPanel);
+        tabbedPane.add(scrollPane);        
+		new MailUI((JPanel) mailPanel, date);
+		tabbedPane.add(MAIL, scrollPane);
+
+	}
+
 
 	protected JPanel makeTextPanel(String name) {
 		JPanel panel = new JPanel(false);

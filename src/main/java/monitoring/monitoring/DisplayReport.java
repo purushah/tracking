@@ -66,6 +66,11 @@ public class DisplayReport extends JPanel {
 		}
 	}
 
+	private void addMail(File f) {
+		// TODO Auto-generated method stub
+		
+	}
+
 	public static void createAndShowGUI() throws IOException, CannotRealizeException {
 		// Create and set up the window.
 

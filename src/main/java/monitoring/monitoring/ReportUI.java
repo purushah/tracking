@@ -181,7 +181,9 @@ public class ReportUI {
 			Files.copy(file.toPath(), newFile.toPath());
 			Files.write(new File(dir, Util.getFileNameWithoutExtension(file) + ".txt").toPath(),
 					captionTextField.getText().getBytes());
-			// addVideo(newFile);
+			jPanel1.removeAll();
+			pouplateVideos();
+			pouplateImage();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -212,6 +214,7 @@ public class ReportUI {
 				"wrap");
 
 		jPanel1.add(new JLabel(""), "wrap");
+		
 
 	}
 
