@@ -8,6 +8,7 @@ import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.text.ParseException;
 import java.util.Collection;
@@ -24,6 +25,9 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import org.apache.commons.io.FileUtils;
+
+import com.ibm.icu.impl.UCharacterUtility;
+
 import monitoring.pojo.ReportObject;
 import net.miginfocom.swing.MigLayout;
 
@@ -62,13 +66,22 @@ public class DisplayReport extends JPanel {
 			File f = new File(Util.getPath(), day);
 			pouplateVideos(f);
 			pouplateImage(f);
+			addMail(f);
 			add(p);
 		}
 	}
 
-	private void addMail(File f) {
-		// TODO Auto-generated method stub
-		
+	private void addMail(File dir) throws IOException {
+		if (dir.exists()) {
+			String[] extensions = { "mail" };
+			Collection<File> allMail = FileUtils.listFiles(dir, extensions, true);
+			for (File mail : allMail) {
+				for (String line : Files.readAllLines(mail.toPath(), Charset.defaultCharset())) {
+					add(new JLabel(line), "wrap");
+				}
+
+			}
+		}
 	}
 
 	public static void createAndShowGUI() throws IOException, CannotRealizeException {

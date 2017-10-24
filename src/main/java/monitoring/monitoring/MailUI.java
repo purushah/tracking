@@ -86,7 +86,7 @@ public class MailUI {
 			dir.mkdir();
 		}
 		try {
-			Files.write(new File(dir, Util.getFileNameWithoutExtension(file) + ".txt").toPath(),
+			Files.write(new File(dir, Util.getFileNameWithoutExtension(file) + ".mail").toPath(),
 					mailArea.getText().getBytes());
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
