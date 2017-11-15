@@ -19,6 +19,10 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
+
+import monitoring.display.DisplayNotes;
+import monitoring.display.DisplayReport;
+import monitoring.display.DisplaySpecialEvent;
 import monitoring.graph.DrawGraphProgress;
 import monitoring.graph.DrawMultiGraph;
 import monitoring.graph.FilterConfirmBox;

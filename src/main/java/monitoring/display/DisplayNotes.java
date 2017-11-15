@@ -1,4 +1,4 @@
-package monitoring.monitoring;
+package monitoring.display;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -17,11 +17,14 @@ import javax.swing.JScrollPane;
 
 import org.omg.CosNaming.NamingContextExtPackage.AddressHelper;
 
+import monitoring.monitoring.ProgressReport;
+import monitoring.monitoring.SwingLink;
+import monitoring.monitoring.Util;
 import monitoring.pojo.BasicObject;
 import monitoring.pojo.ReportObject;
 import net.miginfocom.swing.MigLayout;
 
-public class DisplaySpecialEvent extends JPanel {
+public class DisplayNotes extends JPanel {
 
 	public static void main(String[] args) throws IOException {
 		createAndShowGUI();
@@ -49,7 +52,7 @@ public class DisplaySpecialEvent extends JPanel {
 
 			SwingLink link = new SwingLink(day, day);
 			p.add(link, "wrap");
-			BasicObject reportObj = report.get(day).getObject(ProgressReport.SPECAIL_EVENT);
+			BasicObject reportObj = report.get(day).getObject(ProgressReport.NOTE);
 			for (String item : reportObj.getAllItemName()) {
 				p.add(new JLabel(item), "span, grow");
 
@@ -62,7 +65,7 @@ public class DisplaySpecialEvent extends JPanel {
 		// Create and set up the window.
 
 		JFrame frame = new JFrame("Neo's Progress Note");
-		DisplaySpecialEvent report = new DisplaySpecialEvent();
+		DisplayNotes report = new DisplayNotes();
 		report.dispalyNotes();
 		// Add content to the window.
 

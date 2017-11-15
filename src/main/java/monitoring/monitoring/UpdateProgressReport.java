@@ -92,7 +92,7 @@ public class UpdateProgressReport extends ProgressReport {
 		update.addActionListener(new UpdateReport(panel, Util.getDayDate(dateOffset)));
 		
 		JButton loadPreviousDay = new javax.swing.JButton("Load Previous Day");
-		loadPreviousDay.addActionListener(new LoadReport(panel, ProgressReport.SUPPLEMENTS, Util.getDayDate(dateOffset-1)));
+		loadPreviousDay.addActionListener(new LoadReport(panel, ProgressReport.SUPPLEMENTS, Util.getLastAvailableReport()));
 		
 		toolBar.add(update);
 		toolBar.addSeparator();

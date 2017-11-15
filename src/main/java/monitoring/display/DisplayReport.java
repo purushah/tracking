@@ -1,4 +1,4 @@
-package monitoring.monitoring;
+package monitoring.display;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -8,7 +8,6 @@ import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.text.ParseException;
 import java.util.Collection;
@@ -26,8 +25,10 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import org.apache.commons.io.FileUtils;
 
-import com.ibm.icu.impl.UCharacterUtility;
-
+import monitoring.monitoring.ShowFileLabel;
+import monitoring.monitoring.SwingLink;
+import monitoring.monitoring.Util;
+import monitoring.monitoring.VideoPlayer;
 import monitoring.pojo.ReportObject;
 import net.miginfocom.swing.MigLayout;
 
@@ -64,22 +65,19 @@ public class DisplayReport extends JPanel {
 			SwingLink link = new SwingLink(day, day);
 			p.add(link, "wrap");
 			File f = new File(Util.getPath(), day);
-			pouplateVideos(f);
-			pouplateImage(f);
-			addMail(f);
+			pouplateVideos(f, p);
+			pouplateImage(f, p);
+			addMail(f, p);
 			add(p);
 		}
 	}
 
-	private void addMail(File dir) throws IOException {
+	private void addMail(File dir, JPanel p) throws IOException {
 		if (dir.exists()) {
 			String[] extensions = { "mail" };
 			Collection<File> allMail = FileUtils.listFiles(dir, extensions, true);
 			for (File mail : allMail) {
-				for (String line : Files.readAllLines(mail.toPath(), Charset.defaultCharset())) {
-					add(new JLabel(line), "wrap");
-				}
-
+				p.add(new ShowFileLabel(mail), "wrap");
 			}
 		}
 	}
@@ -107,30 +105,30 @@ public class DisplayReport extends JPanel {
 
 	}
 
-	public void pouplateVideos(File dir) throws CannotRealizeException, MalformedURLException, IOException {
+	public void pouplateVideos(File dir, JPanel p) throws CannotRealizeException, MalformedURLException, IOException {
 		if (dir.exists()) {
 			String[] extensions = { "mp4", "mov", "m4v", "MOV" };
 			Collection<File> allMovies = FileUtils.listFiles(dir, extensions, true);
 			for (File file : allMovies) {
-				addVideo(file);
+				addVideo(file, p);
 			}
 		}
 	}
 
-	public void pouplateImage(File dir) throws CannotRealizeException, MalformedURLException, IOException {
+	public void pouplateImage(File dir, JPanel p) throws CannotRealizeException, MalformedURLException, IOException {
 		if (dir.exists()) {
 			String[] extensions = { "jpeg", "png", "jpg", "JPG" };
 			for (File file : FileUtils.listFiles(dir, extensions, true)) {
-				addImage(file, null);
+				addImage(file, null, p);
 			}
 		}
 	}
 
-	public void addVideo(File file) throws CannotRealizeException, MalformedURLException, IOException {
-		addImage(new File(Util.getPath() + "/click.png"), file);
+	public void addVideo(File file, JPanel p) throws CannotRealizeException, MalformedURLException, IOException {
+		addImage(new File(Util.getPath() + "/click.png"), file, p);
 	}
 
-	public void addImage(final File file, final File actualFile)
+	public void addImage(final File file, final File actualFile, JPanel p)
 			throws CannotRealizeException, MalformedURLException, IOException {
 
 		ImageIcon img = new ImageIcon(ImageIO.read(file).getScaledInstance(width, height, Image.SCALE_SMOOTH));
@@ -142,11 +140,11 @@ public class DisplayReport extends JPanel {
 				}
 			}
 		});
-		add(imgLabel, "wrap");
+		p.add(imgLabel, "wrap");
 		String name = actualFile == null ? file.getAbsolutePath() : actualFile.getAbsolutePath();
 		File cpationFile = new File(name.substring(0, name.lastIndexOf(".")) + ".txt");
 		if (cpationFile.exists()) {
-			add(new JLabel(Files.readAllLines(cpationFile.toPath()).get(0)), "wrap");
+			p.add(new JLabel(Files.readAllLines(cpationFile.toPath()).get(0)), "wrap");
 		}
 
 	}

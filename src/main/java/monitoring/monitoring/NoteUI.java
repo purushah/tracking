@@ -38,20 +38,9 @@ public class NoteUI {
 		scrollPane = new javax.swing.JScrollPane();
 		sourceList = new javax.swing.JList(sourceListModel);
 		jLabel1 = new javax.swing.JLabel();
-
-		eventText.setText("This is a simppler textt with spellingg errors.");
-
-		// Create user dictionary in the current working directory of your
-		// application
 		SpellChecker.setUserDictionaryProvider(new FileUserDictionary());
-
-		// Load the configuration from the file dictionaries.cnf and
-		// use the current locale or the first language as default
-		// You can download the dictionary files from
-		// http://sourceforge.net/projects/jortho/files/Dictionaries/
 		SpellChecker.registerDictionaries(null, null);
 
-		// enable the spell checking on the text component with all features
 		SpellChecker.register(eventText);
 
 		addNote.addActionListener(new java.awt.event.ActionListener() {

@@ -50,8 +50,7 @@ public class Util {
 		Collections.sort(result, String.CASE_INSENSITIVE_ORDER);
 		return result;
 	}
-	
-	
+
 	public static void updateFileList(String name, List<String> lines) throws IOException {
 		List<String> result = Files.readAllLines(new File(getPath() + "/" + name + ".txt").toPath(),
 				Charset.defaultCharset());
@@ -59,10 +58,9 @@ public class Util {
 		Files.write(new File(getPath() + "/" + name + ".txt").toPath(), result, Charset.defaultCharset());
 	}
 
-
 	public static List<String> getOptionList(String option) throws IOException {
-		List<String> results = Files.readAllLines(
-				new File(getPath() + "/" + option + ".txt").toPath(), Charset.defaultCharset());
+		List<String> results = Files.readAllLines(new File(getPath() + "/" + option + ".txt").toPath(),
+				Charset.defaultCharset());
 		List<String> newResults = new ArrayList<String>();
 		for (String result : results) {
 			newResults.add(result.split(ProgressConstant.seperator)[0]);
@@ -84,10 +82,9 @@ public class Util {
 
 	}
 
-	
 	public static Map<String, String> getOptionMap(String option) throws IOException {
-		List<String> results = Files.readAllLines(
-				new File(getPath() + "/" + option + ".txt").toPath(), Charset.defaultCharset());
+		List<String> results = Files.readAllLines(new File(getPath() + "/" + option + ".txt").toPath(),
+				Charset.defaultCharset());
 		Map<String, String> newResults = new HashMap<String, String>();
 		for (String result : results) {
 			newResults.put(result.split(ProgressConstant.seperator)[0], result.split(ProgressConstant.seperator)[1]);
@@ -95,10 +92,11 @@ public class Util {
 		return newResults;
 
 	}
-	
+
 	public static Map<String, String> getOptionMapForValue(String name, String type) throws IOException {
 		List<String> results = Files.readAllLines(
-				new File(getPath() + "/" + getOptionType(name.trim(), type) + ".txt").toPath(), Charset.defaultCharset());
+				new File(getPath() + "/" + getOptionType(name.trim(), type) + ".txt").toPath(),
+				Charset.defaultCharset());
 		Map<String, String> newResults = new HashMap<String, String>();
 		for (String result : results) {
 			newResults.put(result.split(ProgressConstant.seperator)[0], result.split(ProgressConstant.seperator)[1]);
@@ -106,7 +104,6 @@ public class Util {
 		return newResults;
 
 	}
-
 
 	public static Map<String, String> getColorMap() throws IOException {
 		List<String> results = Files.readAllLines(
@@ -131,8 +128,8 @@ public class Util {
 	public static Map<String, List<String>> getCalanderMap() {
 		List<String> results = null;
 		try {
-			results = Files.readAllLines(
-					new File(getPath() + "/" + ProgressConstant.CALENDAR + ".txt").toPath(), Charset.defaultCharset());
+			results = Files.readAllLines(new File(getPath() + "/" + ProgressConstant.CALENDAR + ".txt").toPath(),
+					Charset.defaultCharset());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -148,7 +145,7 @@ public class Util {
 				continue;
 			}
 			if (result.startsWith(ProgressConstant.section_start)) {
-				if(date!=null){
+				if (date != null) {
 					newResults.put(date, events);
 				}
 				date = StringUtils.substring(result, ProgressConstant.section_start.length());
@@ -173,7 +170,7 @@ public class Util {
 	public static String getPath() {
 		return "/Users/purushah/Documents/mydoc/doc/neo report/progress/items";
 	}
-	
+
 	public static String getPathDir(String date) {
 		return getPath() + "/" + date;
 	}
@@ -195,14 +192,24 @@ public class Util {
 				.format(new Date(System.currentTimeMillis() + 24 * 60 * 60 * 1000 * i));
 	}
 
+	public static String getLastAvailableReport() {
+		int count = 0;
+		while (true) {
+			String date = getDayDate(count);
+			if (new File(Util.getPath() + "/" + date + ".txt").exists()) {
+				return date;
+			}
+			count--;
+		}
+	}
+
 	public static Date getDate(String date) throws ParseException {
 		return new SimpleDateFormat("MM-dd-yyyy").parse(date);
 	}
-	
+
 	public static String getDate(Date date) throws ParseException {
 		return new SimpleDateFormat("MM-dd-yyyy").format(date);
 	}
-
 
 	public static String getLatestReportDateAVailabe() throws IOException {
 		File f = new File(getPath());
@@ -238,8 +245,8 @@ public class Util {
 		}
 		return files;
 	}
-	
-	private static File[] getFiles(File f){
+
+	private static File[] getFiles(File f) {
 		return f.listFiles(new FileFilter() {
 
 			public boolean accept(File pathname) {
@@ -248,7 +255,7 @@ public class Util {
 				} catch (ParseException e) {
 					return false;
 				}
-				return pathname.isFile() && true ;
+				return pathname.isFile() && true;
 			}
 		});
 	}
